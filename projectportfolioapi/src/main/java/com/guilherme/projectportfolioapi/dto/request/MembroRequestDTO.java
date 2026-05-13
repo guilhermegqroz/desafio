@@ -5,11 +5,8 @@ import lombok.Data;
 
 @Data
 public class MembroRequestDTO {
-
     @NotBlank
     private String nome;
-
     @NotBlank
     private String atribuicao;
-
 }

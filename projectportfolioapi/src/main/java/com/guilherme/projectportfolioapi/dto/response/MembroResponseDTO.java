@@ -8,11 +8,7 @@ import java.util.UUID;
 @Data
 @Builder
 public class MembroResponseDTO {
-
     private UUID id;
-
     private String nome;
-
     private String atribuicao;
-
 }
