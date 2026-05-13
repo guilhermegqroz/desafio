@@ -18,7 +18,9 @@ public class Membro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nome;
+
     @Enumerated(EnumType.STRING)
     private Atribuicao atribuicao;
 
