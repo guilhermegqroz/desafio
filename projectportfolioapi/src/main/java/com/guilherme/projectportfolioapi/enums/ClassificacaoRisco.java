@@ -1,7 +1,8 @@
 package com.guilherme.projectportfolioapi.enums;
 
-public enum RiskClassification {
+public enum ClassificacaoRisco {
     BAIXO,
     MEDIO,
     ALTO
 }
+

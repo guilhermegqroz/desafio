@@ -1,6 +1,6 @@
 package com.guilherme.projectportfolioapi.enums;
 
-public enum ProjectStatus {
+public enum StatusProjeto {
     EM_ANALISE,
     ANALISE_REALIZADA,
     ANALISE_APROVADA,
@@ -10,3 +10,4 @@ public enum ProjectStatus {
     ENCERRADO,
     CANCELADO
 }
+
