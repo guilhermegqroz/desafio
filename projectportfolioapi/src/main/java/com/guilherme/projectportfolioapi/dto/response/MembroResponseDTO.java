@@ -1,14 +1,18 @@
 package com.guilherme.projectportfolioapi.dto.response;
 
-import lombok.Builder;
-import lombok.Data;
+import com.guilherme.projectportfolioapi.enums.Atribuicao;
+import lombok.*;
 
 import java.util.UUID;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class MembroResponseDTO {
-    private UUID id;
+    private Long id;
     private String nome;
-    private String atribuicao;
+    private Atribuicao atribuicao;
 }

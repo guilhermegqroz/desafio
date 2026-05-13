@@ -1,5 +1,6 @@
 package com.guilherme.projectportfolioapi.entity;
 
+import com.guilherme.projectportfolioapi.enums.Atribuicao;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,9 +16,10 @@ import java.util.UUID;
 public class Membro {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String nome;
-    private String atribuicao;
+    @Enumerated(EnumType.STRING)
+    private Atribuicao atribuicao;
 
 }
