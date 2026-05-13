@@ -35,11 +35,11 @@ public class ProjetoMapper {
                 .descricao(projeto.getDescricao())
                 .status(projeto.getStatus())
                 .classificacaoRisco(projeto.getClassificacaoRisco())
-                .gerenteId(
-                        projeto.getGerenteResponsavel() != null
-                                ? projeto.getGerenteResponsavel().getId()
-                                : null
-                )
+//                .gerenteId(
+//                        projeto.getGerenteResponsavel() != null
+//                                ? projeto.getGerenteResponsavel().getId()
+//                                : null
+//                )
                 .build();
     }
 }
