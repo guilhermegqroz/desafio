@@ -1,13 +1,11 @@
 package com.guilherme.projectportfolioapi.entity;
 
-import com.guilherme.projectportfolioapi.enums.ClassificacaoRisco;
 import com.guilherme.projectportfolioapi.enums.StatusProjeto;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "projetos")
@@ -19,31 +17,33 @@ import java.util.UUID;
 public class Projeto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
+    @Column(nullable = false)
     private LocalDate dataInicio;
 
+    @Column(nullable = false)
     private LocalDate previsaoTermino;
 
     private LocalDate dataRealTermino;
 
+    @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal orcamentoTotal;
 
-    @Column(length = 2000)
+    @Column(columnDefinition = "TEXT")
     private String descricao;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private StatusProjeto status;
-
-    @Enumerated(EnumType.STRING)
-    private ClassificacaoRisco classificacaoRisco;
 
     @ManyToOne
     @JoinColumn(name = "gerente_id")
-    private Membro gerenteResponsavel;
+    private Membro gerente;
 
     @ManyToMany
     @JoinTable(
