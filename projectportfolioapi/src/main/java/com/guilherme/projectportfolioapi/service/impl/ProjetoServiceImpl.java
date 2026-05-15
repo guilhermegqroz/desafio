@@ -12,6 +12,7 @@ import com.guilherme.projectportfolioapi.repository.ProjetoRepository;
 import com.guilherme.projectportfolioapi.service.ProjetoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.guilherme.projectportfolioapi.exception.ResourceNotFoundException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,7 +29,7 @@ public class ProjetoServiceImpl implements ProjetoService {
     public ProjetoResponseDTO criar(ProjetoRequestDTO dto) {
 
         Membro gerente = membroRepository.findById(dto.getGerenteId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Gerente não encontrado"
                 ));
 
@@ -65,17 +66,62 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     @Override
     public ProjetoResponseDTO buscarPorId(Long id) {
-        return null;
+        Projeto projeto = projetoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Projeto não encontrado"
+                ));
+
+        return projetoMapper.toDTO(
+                projeto,
+                calcularRisco(projeto)
+        );
     }
 
     @Override
     public ProjetoResponseDTO atualizar(Long id, ProjetoRequestDTO dto) {
-        return null;
+        Projeto projeto = projetoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Projeto não encontrado"
+                ));
+
+        Membro gerente = membroRepository.findById(dto.getGerenteId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Gerente não encontrado"
+                ));
+
+        projeto.setNome(dto.getNome());
+        projeto.setDataInicio(dto.getDataInicio());
+        projeto.setPrevisaoTermino(dto.getPrevisaoTermino());
+        projeto.setDataRealTermino(dto.getDataRealTermino());
+        projeto.setOrcamentoTotal(dto.getOrcamentoTotal());
+        projeto.setDescricao(dto.getDescricao());
+        projeto.setGerente(gerente);
+
+        Projeto projetoAtualizado = projetoRepository.save(projeto);
+
+        return projetoMapper.toDTO(
+                projetoAtualizado,
+                calcularRisco(projetoAtualizado)
+        );
     }
 
     @Override
     public void deletar(Long id) {
+        Projeto projeto = projetoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Projeto não encontrado"
+                ));
 
+        if (projeto.getStatus() == StatusProjeto.INICIADO
+                || projeto.getStatus() == StatusProjeto.EM_ANDAMENTO
+                || projeto.getStatus() == StatusProjeto.ENCERRADO) {
+
+            throw new ResourceNotFoundException(
+                    "Não é permitido excluir projetos nesse status"
+            );
+        }
+
+        projetoRepository.delete(projeto);
     }
 
     private ClassificacaoRisco calcularRisco(Projeto projeto) {
