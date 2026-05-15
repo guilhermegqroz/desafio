@@ -53,7 +53,14 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     @Override
     public List<ProjetoResponseDTO> listar() {
-        return List.of();
+
+        return projetoRepository.findAll()
+                .stream()
+                .map(projeto -> projetoMapper.toDTO(
+                        projeto,
+                        calcularRisco(projeto)
+                ))
+                .toList();
     }
 
     @Override
