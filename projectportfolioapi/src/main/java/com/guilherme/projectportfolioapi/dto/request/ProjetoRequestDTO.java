@@ -1,6 +1,7 @@
 package com.guilherme.projectportfolioapi.dto.request;
 
 import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -8,7 +9,6 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ProjetoRequestDTO {
 
     private String nome;

@@ -1,7 +1,13 @@
 package com.guilherme.projectportfolioapi.enums;
 
+import com.guilherme.projectportfolioapi.entity.Projeto;
+
 public enum ClassificacaoRisco {
-    BAIXO_RISCO,
-    MEDIO_RISCO,
-    ALTO_RISCO
+    BAIXO,
+    MEDIO,
+    ALTO;
+
+    private ClassificacaoRisco calcularRisco(Projeto projeto) {
+        return ClassificacaoRisco.BAIXO;
+    }
 }

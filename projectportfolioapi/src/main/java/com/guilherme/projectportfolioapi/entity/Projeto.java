@@ -3,6 +3,7 @@ package com.guilherme.projectportfolioapi.entity;
 import com.guilherme.projectportfolioapi.enums.StatusProjeto;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -38,7 +39,6 @@ public class Projeto {
     private String descricao;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private StatusProjeto status;
 
     @ManyToOne

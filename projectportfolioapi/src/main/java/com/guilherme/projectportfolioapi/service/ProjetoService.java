@@ -2,20 +2,16 @@ package com.guilherme.projectportfolioapi.service;
 
 import com.guilherme.projectportfolioapi.dto.request.ProjetoRequestDTO;
 import com.guilherme.projectportfolioapi.dto.response.ProjetoResponseDTO;
-import com.guilherme.projectportfolioapi.enums.StatusProjeto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface ProjetoService {
 
     ProjetoResponseDTO criar(ProjetoRequestDTO dto);
 
-    ProjetoResponseDTO buscarPorId(Long id);
+    List<ProjetoResponseDTO> listar();
 
-    Page<ProjetoResponseDTO> listar(
-            StatusProjeto status,
-            Pageable pageable
-    );
+    ProjetoResponseDTO buscarPorId(Long id);
 
     ProjetoResponseDTO atualizar(
             Long id,
@@ -23,9 +19,4 @@ public interface ProjetoService {
     );
 
     void deletar(Long id);
-
-    ProjetoResponseDTO alterarStatus(
-            Long id,
-            StatusProjeto status
-    );
 }
