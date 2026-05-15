@@ -80,9 +80,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     private ClassificacaoRisco calcularRisco(Projeto projeto) {
 
-        if (projeto.getOrcamentoTotal()
-                .compareTo(new BigDecimal("100000")) > 0) {
-
+        if (projeto.getOrcamentoTotal().compareTo(new BigDecimal("100000")) > 0) {
             return ClassificacaoRisco.ALTO;
         }
 

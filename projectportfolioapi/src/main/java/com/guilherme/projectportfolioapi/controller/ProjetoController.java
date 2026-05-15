@@ -17,10 +17,7 @@ public class ProjetoController {
     private final ProjetoService projetoService;
 
     @PostMapping
-    public ResponseEntity<ProjetoResponseDTO> criar(
-            @RequestBody ProjetoRequestDTO dto
-    ) {
-
+    public ResponseEntity<ProjetoResponseDTO> criar(@RequestBody ProjetoRequestDTO dto) {
         return ResponseEntity.ok(
                 projetoService.criar(dto)
         );
