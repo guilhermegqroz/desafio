@@ -1,6 +1,5 @@
 package com.guilherme.projectportfolioapi.dto.response;
 
-import com.guilherme.projectportfolioapi.enums.Atribuicao;
 import lombok.*;
 
 @Data
@@ -11,9 +10,8 @@ import lombok.*;
 @Setter
 public class MembroResponseDTO {
 
-    private Long id;
-
+    private String id;
     private String nome;
-    
-    private Atribuicao atribuicao;
+    private String atribuicao;
+
 }
