@@ -13,11 +13,9 @@ public interface ProjetoService {
 
     ProjetoResponseDTO buscarPorId(Long id);
 
-    ProjetoResponseDTO atualizar(
-            Long id,
-            ProjetoRequestDTO dto
-    );
+    ProjetoResponseDTO atualizar(Long id, ProjetoRequestDTO dto);
 
     void deletar(Long id);
+    
     ProjetoResponseDTO atualizarStatus(Long id, String status);
 }
