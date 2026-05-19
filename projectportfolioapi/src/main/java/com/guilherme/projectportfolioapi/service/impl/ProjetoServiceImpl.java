@@ -104,9 +104,7 @@ public class ProjetoServiceImpl implements ProjetoService {
                         "Projeto não encontrado"
                 ));
 
-        if (projeto.getStatus() == StatusProjeto.INICIADO
-                || projeto.getStatus() == StatusProjeto.EM_ANDAMENTO
-                        || projeto.getStatus() == StatusProjeto.ENCERRADO) {
+        if (projeto.getStatus() == StatusProjeto.INICIADO || projeto.getStatus() == StatusProjeto.EM_ANDAMENTO || projeto.getStatus() == StatusProjeto.ENCERRADO) {
                 throw new ResourceNotFoundException("Não é permitido excluir projetos nesse status");
         }
 
