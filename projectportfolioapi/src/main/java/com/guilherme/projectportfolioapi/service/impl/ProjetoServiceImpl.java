@@ -134,13 +134,17 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         BigDecimal orcamento = projeto.getOrcamentoTotal();
 
+        //orcamento <= 100000 && meses <= 3
         if (orcamento.compareTo(new BigDecimal("100000")) <= 0 && meses <= 3) {
             return ClassificacaoRisco.BAIXO;
         }
 
+        //orcamento entre 100001 e 500000 ou meses entre 4 e 6
         if ((orcamento.compareTo(new BigDecimal("100000")) > 0 && orcamento.compareTo(new BigDecimal("500000")) <= 0) || (meses > 3 && meses <= 6)) {
             return ClassificacaoRisco.MEDIO;
         }
+
+        //se não entrar em nenhuma das condições acima ele entra aqui
         return ClassificacaoRisco.ALTO;
     }
     private void validarTransicaoStatus(
