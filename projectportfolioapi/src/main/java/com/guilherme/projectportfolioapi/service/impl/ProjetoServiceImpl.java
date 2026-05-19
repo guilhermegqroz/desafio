@@ -138,8 +138,7 @@ public class ProjetoServiceImpl implements ProjetoService {
             return;
         }
 
-        if (atual == StatusProjeto.EM_ANALISE && novo != StatusProjeto.ANALISE_REALIZADA
-        ) {
+        if (atual == StatusProjeto.EM_ANALISE && novo != StatusProjeto.ANALISE_REALIZADA) {
             throw new IllegalArgumentException("Transição inválida");
         }
 
@@ -166,7 +165,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     @Override
     public ProjetoResponseDTO atualizarStatus(Long id, String status) {
-        
+
         Projeto projeto = projetoRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
