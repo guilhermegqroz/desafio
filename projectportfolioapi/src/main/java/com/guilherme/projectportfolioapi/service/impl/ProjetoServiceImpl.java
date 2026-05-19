@@ -138,7 +138,12 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         StatusProjeto novoStatus = StatusProjeto.valueOf(status.toUpperCase());
         validarTransicaoStatus(projeto.getStatus(), novoStatus);
-
+        if (novoStatus == StatusProjeto.ENCERRADO) {
+            long totalMembros = projetoMembroRepository.countByProjetoId(id);
+            if (totalMembros < 1) {
+                throw new IllegalArgumentException("Projeto deve possuir ao menos 1 membro.");
+            }
+        }
         projeto.setStatus(novoStatus);
         Projeto projetoAtualizado = projetoRepository.save(projeto);
 

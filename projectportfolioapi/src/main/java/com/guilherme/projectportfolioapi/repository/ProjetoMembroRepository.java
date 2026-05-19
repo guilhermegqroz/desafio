@@ -4,8 +4,7 @@ import com.guilherme.projectportfolioapi.entity.ProjetoMembro;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface ProjetoMembroRepository
-        extends JpaRepository<ProjetoMembro, Long> {
+public interface ProjetoMembroRepository extends JpaRepository<ProjetoMembro, Long> {
 
     long countByProjetoId(Long projetoId);
 
@@ -18,7 +17,5 @@ public interface ProjetoMembroRepository
                     "com.guilherme.projectportfolioapi.enums.StatusProjeto.ENCERRADO, " +
                     "com.guilherme.projectportfolioapi.enums.StatusProjeto.CANCELADO)"
     )
-    long countProjetosAtivosDoMembro(
-            String membroId
-    );
+    long countProjetosAtivosDoMembro(String membroId);
 }

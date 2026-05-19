@@ -40,17 +40,14 @@ public class ProjetoController {
 		return ResponseEntity.noContent().build();
 	}
 
-
 	@PatchMapping("/{id}/status")
 	public ResponseEntity < ProjetoResponseDTO > atualizarStatus(@PathVariable Long id, @RequestParam String status) {
 		return ResponseEntity.ok(projetoService.atualizarStatus(id, status));
 	}
-
+	
 	@PostMapping("/{projetoId}/membros/{membroId}")
-	public ResponseEntity<Void> associarMembro(@PathVariable Long projetoId, @PathVariable String membroId) {
-
+	public ResponseEntity < Void > associarMembro(@PathVariable Long projetoId, @PathVariable String membroId) {
 		projetoService.associarMembro(projetoId, membroId);
-
 		return ResponseEntity.ok().build();
 	}
 }

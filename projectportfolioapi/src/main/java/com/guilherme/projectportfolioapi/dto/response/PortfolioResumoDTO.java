@@ -13,13 +13,11 @@ import java.util.Map;
 @AllArgsConstructor
 public class PortfolioResumoDTO {
 
-    private Map<StatusProjeto, Long>
-            quantidadeProjetosPorStatus;
+	private Map < StatusProjeto, Long > quantidadeProjetosPorStatus;
 
-    private Map<StatusProjeto, BigDecimal>
-            totalOrcadoPorStatus;
+	private Map < StatusProjeto, BigDecimal > totalOrcadoPorStatus;
 
-    private Double mediaDuracaoProjetosEncerrados;
-
-    private Long totalMembrosUnicosAlocados;
+	private Double mediaDuracaoProjetosEncerrados;
+        
+	private Long totalMembrosUnicosAlocados;
 }
