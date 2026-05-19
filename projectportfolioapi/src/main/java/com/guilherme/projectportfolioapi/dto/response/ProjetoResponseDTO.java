@@ -28,7 +28,7 @@ public class ProjetoResponseDTO {
 
     private String descricao;
 
-    private String gerente;
+    private Long gerente;
 
     private StatusProjeto status;
 

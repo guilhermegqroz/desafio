@@ -3,10 +3,8 @@ package com.guilherme.projectportfolioapi.entity;
 import com.guilherme.projectportfolioapi.enums.StatusProjeto;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "projetos")
@@ -41,15 +39,6 @@ public class Projeto {
     @Enumerated(EnumType.STRING)
     private StatusProjeto status;
 
-    @ManyToOne
-    @JoinColumn(name = "gerente_id")
-    private Membro gerente;
-
-    @ManyToMany
-    @JoinTable(
-            name = "projeto_membros",
-            joinColumns = @JoinColumn(name = "projeto_id"),
-            inverseJoinColumns = @JoinColumn(name = "membro_id")
-    )
-    private List<Membro> membros;
+    @Column(name = "gerente_id")
+    private Long gerenteId;
 }
