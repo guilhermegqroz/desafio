@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.guilherme.projectportfolioapi.exception.ResourceNotFoundException;
 
 import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -126,10 +127,100 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     private ClassificacaoRisco calcularRisco(Projeto projeto) {
 
-        if (projeto.getOrcamentoTotal().compareTo(new BigDecimal("100000")) > 0) {
-            return ClassificacaoRisco.ALTO;
+        long meses = ChronoUnit.MONTHS.between(
+                projeto.getDataInicio(),
+                projeto.getPrevisaoTermino()
+        );
+
+        BigDecimal orcamento = projeto.getOrcamentoTotal();
+
+        if (orcamento.compareTo(new BigDecimal("100000")) <= 0 && meses <= 3) {
+            return ClassificacaoRisco.BAIXO;
         }
 
-        return ClassificacaoRisco.BAIXO;
+        if ((orcamento.compareTo(new BigDecimal("100000")) > 0 && orcamento.compareTo(new BigDecimal("500000")) <= 0) || (meses > 3 && meses <= 6)) {
+            return ClassificacaoRisco.MEDIO;
+        }
+        return ClassificacaoRisco.ALTO;
     }
+    private void validarTransicaoStatus(
+            StatusProjeto atual,
+            StatusProjeto novo
+    ) {
+
+        if (novo == StatusProjeto.CANCELADO) {
+            return;
+        }
+
+        if (
+                atual == StatusProjeto.EM_ANALISE
+                        && novo != StatusProjeto.ANALISE_REALIZADA
+        ) {
+            throw new IllegalArgumentException("Transição inválida");
+        }
+
+        if (
+                atual == StatusProjeto.ANALISE_REALIZADA
+                        && novo != StatusProjeto.ANALISE_APROVADA
+        ) {
+            throw new IllegalArgumentException("Transição inválida");
+        }
+
+        if (
+                atual == StatusProjeto.ANALISE_APROVADA
+                        && novo != StatusProjeto.INICIADO
+        ) {
+            throw new IllegalArgumentException("Transição inválida");
+        }
+
+        if (
+                atual == StatusProjeto.INICIADO
+                        && novo != StatusProjeto.PLANEJADO
+        ) {
+            throw new IllegalArgumentException("Transição inválida");
+        }
+
+        if (
+                atual == StatusProjeto.PLANEJADO
+                        && novo != StatusProjeto.EM_ANDAMENTO
+        ) {
+            throw new IllegalArgumentException("Transição inválida");
+        }
+
+        if (
+                atual == StatusProjeto.EM_ANDAMENTO
+                        && novo != StatusProjeto.ENCERRADO
+        ) {
+            throw new IllegalArgumentException("Transição inválida");
+        }
+    }
+
+    @Override
+    public ProjetoResponseDTO atualizarStatus(Long id, String status) {
+        Projeto projeto = projetoRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Projeto não encontrado"
+                        )
+                );
+
+        StatusProjeto novoStatus = StatusProjeto.valueOf(
+                status.toUpperCase()
+        );
+
+        validarTransicaoStatus(
+                projeto.getStatus(),
+                novoStatus
+        );
+
+        projeto.setStatus(novoStatus);
+
+        Projeto projetoAtualizado = projetoRepository.save(projeto);
+
+        return projetoMapper.toDTO(
+                projetoAtualizado,
+                calcularRisco(projetoAtualizado)
+        );
+    }
+
 }

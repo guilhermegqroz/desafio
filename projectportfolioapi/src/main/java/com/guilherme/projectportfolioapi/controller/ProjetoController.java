@@ -46,4 +46,17 @@ public class ProjetoController {
         projetoService.deletar(id);
         return ResponseEntity.noContent().build();
     }
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ProjetoResponseDTO> atualizarStatus(
+            @PathVariable Long id,
+            @RequestParam String status
+    ) {
+
+        return ResponseEntity.ok(
+                projetoService.atualizarStatus(
+                        id,
+                        status
+                )
+        );
+    }
 }

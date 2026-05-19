@@ -19,4 +19,5 @@ public interface ProjetoService {
     );
 
     void deletar(Long id);
+    ProjetoResponseDTO atualizarStatus(Long id, String status);
 }

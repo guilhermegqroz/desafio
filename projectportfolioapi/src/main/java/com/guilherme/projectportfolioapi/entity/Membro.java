@@ -4,6 +4,8 @@ import com.guilherme.projectportfolioapi.enums.Atribuicao;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,5 +25,8 @@ public class Membro {
 
     @Enumerated(EnumType.STRING)
     private Atribuicao atribuicao;
+
+    @ManyToMany(mappedBy = "membros")
+    private List<Projeto> projetos = new ArrayList<>();
 
 }
