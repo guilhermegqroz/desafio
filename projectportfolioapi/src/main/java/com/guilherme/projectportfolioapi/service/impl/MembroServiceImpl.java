@@ -20,29 +20,36 @@ public class MembroServiceImpl implements MembroService {
 
     @Override
     public MembroResponseDTO criarMembro(MembroRequestDTO dto) {
+
         Membro membro = membroMapper.toEntity(dto);
         Membro membroSalvo = membroRepository.save(membro);
         return membroMapper.toDTO(membroSalvo);
+        
     }
 
     @Override
     public List<MembroResponseDTO> listarMembros() {
+
         return membroRepository.findAll()
                 .stream()
                 .map(membroMapper::toDTO)
                 .toList();
+
     }
 
     @Override
     public MembroResponseDTO buscarPorId(Long id) {
+
         Membro membro = membroRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Membro não encontrado"));
         return membroMapper.toDTO(membro);
+
     }
 
     @Override
     public MembroResponseDTO atualizarMembro(Long id, MembroRequestDTO dto) {
+
         Membro membro = membroRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Membro não encontrado"));
@@ -54,9 +61,11 @@ public class MembroServiceImpl implements MembroService {
 
     @Override
     public void deletarMembro(Long id) {
+
         Membro membro = membroRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Membro não encontrado"));
+
         membroRepository.delete(membro);
     }
 }

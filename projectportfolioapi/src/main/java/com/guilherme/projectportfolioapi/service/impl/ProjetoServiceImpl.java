@@ -47,10 +47,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         Projeto projetoSalvo = projetoRepository.save(projeto);
 
-        return projetoMapper.toDTO(
-                projetoSalvo,
-                calcularRisco(projetoSalvo)
-        );
+        return projetoMapper.toDTO(projetoSalvo,calcularRisco(projetoSalvo));
     }
 
     @Override
@@ -72,10 +69,7 @@ public class ProjetoServiceImpl implements ProjetoService {
                         "Projeto não encontrado"
                 ));
 
-        return projetoMapper.toDTO(
-                projeto,
-                calcularRisco(projeto)
-        );
+        return projetoMapper.toDTO(projeto, calcularRisco(projeto));
     }
 
     @Override
@@ -100,10 +94,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         Projeto projetoAtualizado = projetoRepository.save(projeto);
 
-        return projetoMapper.toDTO(
-                projetoAtualizado,
-                calcularRisco(projetoAtualizado)
-        );
+        return projetoMapper.toDTO(projetoAtualizado, calcularRisco(projetoAtualizado));
     }
 
     @Override
@@ -115,11 +106,8 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         if (projeto.getStatus() == StatusProjeto.INICIADO
                 || projeto.getStatus() == StatusProjeto.EM_ANDAMENTO
-                || projeto.getStatus() == StatusProjeto.ENCERRADO) {
-
-            throw new ResourceNotFoundException(
-                    "Não é permitido excluir projetos nesse status"
-            );
+                        || projeto.getStatus() == StatusProjeto.ENCERRADO) {
+                throw new ResourceNotFoundException("Não é permitido excluir projetos nesse status");
         }
 
         projetoRepository.delete(projeto);
@@ -127,10 +115,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     private ClassificacaoRisco calcularRisco(Projeto projeto) {
 
-        long meses = ChronoUnit.MONTHS.between(
-                projeto.getDataInicio(),
-                projeto.getPrevisaoTermino()
-        );
+        long meses = ChronoUnit.MONTHS.between(projeto.getDataInicio(), projeto.getPrevisaoTermino());
 
         BigDecimal orcamento = projeto.getOrcamentoTotal();
 
@@ -147,60 +132,41 @@ public class ProjetoServiceImpl implements ProjetoService {
         //se não entrar em nenhuma das condições acima ele entra aqui
         return ClassificacaoRisco.ALTO;
     }
-    private void validarTransicaoStatus(
-            StatusProjeto atual,
-            StatusProjeto novo
-    ) {
+    private void validarTransicaoStatus(StatusProjeto atual, StatusProjeto novo) {
 
         if (novo == StatusProjeto.CANCELADO) {
             return;
         }
 
-        if (
-                atual == StatusProjeto.EM_ANALISE
-                        && novo != StatusProjeto.ANALISE_REALIZADA
+        if (atual == StatusProjeto.EM_ANALISE && novo != StatusProjeto.ANALISE_REALIZADA
         ) {
             throw new IllegalArgumentException("Transição inválida");
         }
 
-        if (
-                atual == StatusProjeto.ANALISE_REALIZADA
-                        && novo != StatusProjeto.ANALISE_APROVADA
-        ) {
+        if (atual == StatusProjeto.ANALISE_REALIZADA && novo != StatusProjeto.ANALISE_APROVADA) {
             throw new IllegalArgumentException("Transição inválida");
         }
 
-        if (
-                atual == StatusProjeto.ANALISE_APROVADA
-                        && novo != StatusProjeto.INICIADO
-        ) {
+        if (atual == StatusProjeto.ANALISE_APROVADA && novo != StatusProjeto.INICIADO) {
             throw new IllegalArgumentException("Transição inválida");
         }
 
-        if (
-                atual == StatusProjeto.INICIADO
-                        && novo != StatusProjeto.PLANEJADO
-        ) {
+        if (atual == StatusProjeto.INICIADO && novo != StatusProjeto.PLANEJADO) {
             throw new IllegalArgumentException("Transição inválida");
         }
 
-        if (
-                atual == StatusProjeto.PLANEJADO
-                        && novo != StatusProjeto.EM_ANDAMENTO
-        ) {
+        if (atual == StatusProjeto.PLANEJADO && novo != StatusProjeto.EM_ANDAMENTO) {
             throw new IllegalArgumentException("Transição inválida");
         }
 
-        if (
-                atual == StatusProjeto.EM_ANDAMENTO
-                        && novo != StatusProjeto.ENCERRADO
-        ) {
+        if (atual == StatusProjeto.EM_ANDAMENTO && novo != StatusProjeto.ENCERRADO) {
             throw new IllegalArgumentException("Transição inválida");
         }
     }
 
     @Override
     public ProjetoResponseDTO atualizarStatus(Long id, String status) {
+        
         Projeto projeto = projetoRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
@@ -208,23 +174,15 @@ public class ProjetoServiceImpl implements ProjetoService {
                         )
                 );
 
-        StatusProjeto novoStatus = StatusProjeto.valueOf(
-                status.toUpperCase()
-        );
+        StatusProjeto novoStatus = StatusProjeto.valueOf(status.toUpperCase());
 
-        validarTransicaoStatus(
-                projeto.getStatus(),
-                novoStatus
-        );
+        validarTransicaoStatus(projeto.getStatus(), novoStatus);
 
         projeto.setStatus(novoStatus);
 
         Projeto projetoAtualizado = projetoRepository.save(projeto);
 
-        return projetoMapper.toDTO(
-                projetoAtualizado,
-                calcularRisco(projetoAtualizado)
-        );
+        return projetoMapper.toDTO(projetoAtualizado, calcularRisco(projetoAtualizado));
     }
 
 }

@@ -16,9 +16,7 @@ public class ProjetoController {
 
 	@PostMapping
 	public ResponseEntity < ProjetoResponseDTO > criar(@RequestBody ProjetoRequestDTO dto) {
-		return ResponseEntity.ok(
-			projetoService.criar(dto)
-		);
+		return ResponseEntity.ok(projetoService.criar(dto));
 	}
 
 	@GetMapping
@@ -28,9 +26,7 @@ public class ProjetoController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity < ProjetoResponseDTO > buscarPorId(@PathVariable Long id) {
-		return ResponseEntity.ok(
-			projetoService.buscarPorId(id)
-		);
+		return ResponseEntity.ok(projetoService.buscarPorId(id));
 	}
 
 	@PutMapping("/{id}")
@@ -41,17 +37,11 @@ public class ProjetoController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity < Void > deletar(@PathVariable Long id) {
 		projetoService.deletar(id);
-		return ResponseEntity.noContent()
-			.build();
+		return ResponseEntity.noContent().build();
 	}
 
 	@PatchMapping("/{id}/status")
 	public ResponseEntity < ProjetoResponseDTO > atualizarStatus(@PathVariable Long id, @RequestParam String status) {
-		return ResponseEntity.ok(
-			projetoService.atualizarStatus(
-				id,
-				status
-			)
-		);
+		return ResponseEntity.ok(projetoService.atualizarStatus(id, status));
 	}
 }
