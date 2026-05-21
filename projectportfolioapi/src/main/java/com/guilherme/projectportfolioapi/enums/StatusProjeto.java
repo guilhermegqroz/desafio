@@ -1,6 +1,7 @@
 package com.guilherme.projectportfolioapi.enums;
 
 public enum StatusProjeto {
+
     EM_ANALISE,
     ANALISE_REALIZADA,
     ANALISE_APROVADA,
@@ -8,5 +9,29 @@ public enum StatusProjeto {
     PLANEJADO,
     EM_ANDAMENTO,
     ENCERRADO,
-    CANCELADO
+    CANCELADO;
+
+    public boolean podeTransicionarPara(StatusProjeto novoStatus) {
+
+        if (novoStatus == CANCELADO) {
+            return true;
+        }
+
+        return switch (this) {
+
+            case EM_ANALISE -> novoStatus == ANALISE_REALIZADA;
+
+            case ANALISE_REALIZADA -> novoStatus == ANALISE_APROVADA;
+
+            case ANALISE_APROVADA -> novoStatus == INICIADO;
+
+            case INICIADO -> novoStatus == PLANEJADO;
+
+            case PLANEJADO -> novoStatus == EM_ANDAMENTO;
+
+            case EM_ANDAMENTO -> novoStatus == ENCERRADO;
+
+            default -> false;
+        };
+    }
 }

@@ -24,6 +24,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjetoServiceImpl implements ProjetoService {
 
+    private static final BigDecimal LIMITE_BAIXO = new BigDecimal("100000");
+    private static final BigDecimal LIMITE_MEDIO = new BigDecimal("500000");
+
     private final ProjetoRepository projetoRepository;
     private final ProjetoMapper projetoMapper;
     private final ProjetoMembroRepository projetoMembroRepository;
@@ -31,6 +34,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     @Override
     public ProjetoResponseDTO criar(ProjetoRequestDTO dto) {
+
         Projeto projeto = Projeto.builder()
                 .nome(dto.getNome())
                 .dataInicio(dto.getDataInicio())
@@ -43,28 +47,42 @@ public class ProjetoServiceImpl implements ProjetoService {
                 .build();
 
         Projeto projetoSalvo = projetoRepository.save(projeto);
-        return projetoMapper.toDTO(projetoSalvo, calcularRisco(projetoSalvo));
+
+        return projetoMapper.toDTO(
+                projetoSalvo,
+                calcularRisco(projetoSalvo)
+        );
     }
 
     @Override
     public List<ProjetoResponseDTO> listar() {
+
         return projetoRepository.findAll()
                 .stream()
-                .map(projeto -> projetoMapper.toDTO(projeto, calcularRisco(projeto)))
+                .map(projeto ->
+                        projetoMapper.toDTO(
+                                projeto,
+                                calcularRisco(projeto)
+                        )
+                )
                 .toList();
     }
 
     @Override
     public ProjetoResponseDTO buscarPorId(Long id) {
-        Projeto projeto = projetoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado"));
-        return projetoMapper.toDTO(projeto, calcularRisco(projeto));
+
+        Projeto projeto = buscarProjeto(id);
+
+        return projetoMapper.toDTO(
+                projeto,
+                calcularRisco(projeto)
+        );
     }
 
     @Override
     public ProjetoResponseDTO atualizar(Long id, ProjetoRequestDTO dto) {
-        Projeto projeto = projetoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado"));
+
+        Projeto projeto = buscarProjeto(id);
 
         projeto.setNome(dto.getNome());
         projeto.setDataInicio(dto.getDataInicio());
@@ -75,101 +93,59 @@ public class ProjetoServiceImpl implements ProjetoService {
         projeto.setGerenteId(dto.getGerenteId());
 
         Projeto projetoAtualizado = projetoRepository.save(projeto);
-        return projetoMapper.toDTO(projetoAtualizado, calcularRisco(projetoAtualizado));
+
+        return projetoMapper.toDTO(
+                projetoAtualizado,
+                calcularRisco(projetoAtualizado)
+        );
     }
 
     @Override
     public void deletar(Long id) {
-        Projeto projeto = projetoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado"));
 
-        if (projeto.getStatus() == StatusProjeto.INICIADO
-                || projeto.getStatus() == StatusProjeto.EM_ANDAMENTO
-                || projeto.getStatus() == StatusProjeto.ENCERRADO) {
-            throw new IllegalArgumentException("Não é permitido excluir projetos nesse status");
-        }
+        Projeto projeto = buscarProjeto(id);
+
+        validarExclusaoProjeto(projeto);
 
         projetoRepository.delete(projeto);
     }
 
-    private ClassificacaoRisco calcularRisco(Projeto projeto) {
-        long meses = ChronoUnit.MONTHS.between(projeto.getDataInicio(), projeto.getPrevisaoTermino());
-        BigDecimal orcamento = projeto.getOrcamentoTotal();
-
-        if (orcamento.compareTo(new BigDecimal("100000")) <= 0 && meses <= 3) {
-            return ClassificacaoRisco.BAIXO;
-        }
-
-        if ((orcamento.compareTo(new BigDecimal("100000")) > 0 && orcamento.compareTo(new BigDecimal("500000")) <= 0)
-                || (meses > 3 && meses <= 6)) {
-            return ClassificacaoRisco.MEDIO;
-        }
-
-        return ClassificacaoRisco.ALTO;
-    }
-
-    private void validarTransicaoStatus(StatusProjeto atual, StatusProjeto novo) {
-        if (novo == StatusProjeto.CANCELADO) return;
-
-        if (atual == StatusProjeto.EM_ANALISE && novo != StatusProjeto.ANALISE_REALIZADA) {
-            throw new IllegalArgumentException("Transição inválida");
-        }
-        if (atual == StatusProjeto.ANALISE_REALIZADA && novo != StatusProjeto.ANALISE_APROVADA) {
-            throw new IllegalArgumentException("Transição inválida");
-        }
-        if (atual == StatusProjeto.ANALISE_APROVADA && novo != StatusProjeto.INICIADO) {
-            throw new IllegalArgumentException("Transição inválida");
-        }
-        if (atual == StatusProjeto.INICIADO && novo != StatusProjeto.PLANEJADO) {
-            throw new IllegalArgumentException("Transição inválida");
-        }
-        if (atual == StatusProjeto.PLANEJADO && novo != StatusProjeto.EM_ANDAMENTO) {
-            throw new IllegalArgumentException("Transição inválida");
-        }
-        if (atual == StatusProjeto.EM_ANDAMENTO && novo != StatusProjeto.ENCERRADO) {
-            throw new IllegalArgumentException("Transição inválida");
-        }
-    }
-
     @Override
     public ProjetoResponseDTO atualizarStatus(Long id, String status) {
-        Projeto projeto = projetoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado"));
 
-        StatusProjeto novoStatus = StatusProjeto.valueOf(status.toUpperCase());
-        validarTransicaoStatus(projeto.getStatus(), novoStatus);
-        if (novoStatus == StatusProjeto.ENCERRADO) {
-            long totalMembros = projetoMembroRepository.countByProjetoId(id);
-            if (totalMembros < 1) {
-                throw new IllegalArgumentException("Projeto deve possuir ao menos 1 membro.");
-            }
-        }
+        Projeto projeto = buscarProjeto(id);
+
+        StatusProjeto novoStatus =
+                StatusProjeto.valueOf(status.toUpperCase());
+
+        validarTransicaoStatus(projeto, novoStatus);
+
+        validarProjetoEncerradoComMembros(id, novoStatus);
+
         projeto.setStatus(novoStatus);
-        Projeto projetoAtualizado = projetoRepository.save(projeto);
 
-        return projetoMapper.toDTO(projetoAtualizado, calcularRisco(projetoAtualizado));
+        Projeto projetoAtualizado =
+                projetoRepository.save(projeto);
+
+        return projetoMapper.toDTO(
+                projetoAtualizado,
+                calcularRisco(projetoAtualizado)
+        );
     }
 
     @Override
     public void associarMembro(Long projetoId, String membroId) {
-        Projeto projeto = projetoRepository.findById(projetoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado."));
 
-        MembroResponseDTO membro = membroClientService.buscarMembro(membroId);
+        Projeto projeto = buscarProjeto(projetoId);
 
-        if (!membro.getAtribuicao().equalsIgnoreCase("FUNCIONARIO")) {
-            throw new IllegalArgumentException("Apenas FUNCIONARIOS podem ser associados.");
-        }
+        MembroResponseDTO membro =
+                membroClientService.buscarMembro(membroId);
 
-        long totalMembros = projetoMembroRepository.countByProjetoId(projetoId);
-        if (totalMembros >= 10) {
-            throw new IllegalArgumentException("Projeto já possui 10 membros.");
-        }
+        validarFuncionario(membro);
 
-        long projetosAtivos = projetoMembroRepository.countProjetosAtivosDoMembro(membroId);
-        if (projetosAtivos >= 3) {
-            throw new IllegalArgumentException("Membro já participa de 3 projetos ativos.");
-        }
+        validarLimiteMembrosProjeto(projetoId);
+
+        validarLimiteProjetosMembro(membroId);
 
         ProjetoMembro projetoMembro = ProjetoMembro.builder()
                 .projeto(projeto)
@@ -177,5 +153,127 @@ public class ProjetoServiceImpl implements ProjetoService {
                 .build();
 
         projetoMembroRepository.save(projetoMembro);
+    }
+
+    private Projeto buscarProjeto(Long id) {
+
+        return projetoRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Projeto não encontrado"
+                        )
+                );
+    }
+
+    private void validarExclusaoProjeto(Projeto projeto) {
+
+        if (projeto.getStatus() == StatusProjeto.INICIADO
+                || projeto.getStatus() == StatusProjeto.EM_ANDAMENTO
+                || projeto.getStatus() == StatusProjeto.ENCERRADO) {
+
+            throw new IllegalArgumentException(
+                    "Não é permitido excluir projetos nesse status"
+            );
+        }
+    }
+
+    private void validarTransicaoStatus(
+            Projeto projeto,
+            StatusProjeto novoStatus
+    ) {
+
+        if (!projeto.getStatus()
+                .podeTransicionarPara(novoStatus)) {
+
+            throw new IllegalArgumentException(
+                    "Transição de status inválida"
+            );
+        }
+    }
+
+    private void validarProjetoEncerradoComMembros(
+            Long projetoId,
+            StatusProjeto novoStatus
+    ) {
+
+        if (novoStatus == StatusProjeto.ENCERRADO) {
+
+            long totalMembros =
+                    projetoMembroRepository.countByProjetoId(projetoId);
+
+            if (totalMembros < 1) {
+
+                throw new IllegalArgumentException(
+                        "Projeto deve possuir ao menos 1 membro."
+                );
+            }
+        }
+    }
+
+    private void validarFuncionario(MembroResponseDTO membro) {
+
+        if (!membro.getAtribuicao()
+                .equalsIgnoreCase("FUNCIONARIO")) {
+
+            throw new IllegalArgumentException(
+                    "Apenas FUNCIONARIOS podem ser associados."
+            );
+        }
+    }
+
+    private void validarLimiteMembrosProjeto(Long projetoId) {
+
+        long totalMembros =
+                projetoMembroRepository.countByProjetoId(projetoId);
+
+        if (totalMembros >= 10) {
+
+            throw new IllegalArgumentException(
+                    "Projeto já possui 10 membros."
+            );
+        }
+    }
+
+    private void validarLimiteProjetosMembro(String membroId) {
+
+        long projetosAtivos =
+                projetoMembroRepository
+                        .countProjetosAtivosDoMembro(membroId);
+
+        if (projetosAtivos >= 3) {
+
+            throw new IllegalArgumentException(
+                    "Membro já participa de 3 projetos ativos."
+            );
+        }
+    }
+
+    private ClassificacaoRisco calcularRisco(Projeto projeto) {
+
+        long meses = ChronoUnit.MONTHS.between(
+                projeto.getDataInicio(),
+                projeto.getPrevisaoTermino()
+        );
+
+        BigDecimal orcamento = projeto.getOrcamentoTotal();
+
+        boolean baixoRisco =
+                orcamento.compareTo(LIMITE_BAIXO) <= 0
+                        && meses <= 3;
+
+        boolean medioRisco =
+                (orcamento.compareTo(LIMITE_BAIXO) > 0
+                        && orcamento.compareTo(LIMITE_MEDIO) <= 0)
+                        || (meses > 3 && meses <= 6);
+
+        if (baixoRisco) {
+            return ClassificacaoRisco.BAIXO;
+        }
+
+        if (medioRisco) {
+            return ClassificacaoRisco.MEDIO;
+        }
+
+        return ClassificacaoRisco.ALTO;
     }
 }
