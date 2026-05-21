@@ -9,8 +9,6 @@ public interface ProjetoService {
 
     ProjetoResponseDTO criar(ProjetoRequestDTO dto);
 
-    //List<ProjetoResponseDTO> listar();
-
     Page<ProjetoResponseDTO> listar(String nome, String status, Pageable pageable);
 
     ProjetoResponseDTO buscarPorId(Long id);

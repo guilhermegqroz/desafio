@@ -26,7 +26,7 @@ public class RelatorioServiceImpl implements RelatorioService {
     @Override
     public PortfolioResumoDTO gerarResumoPortfolio() {
 
-         List<Projeto> projetos = projetoRepository.findAll();
+        List<Projeto> projetos = projetoRepository.findAll();
 
         Map<StatusProjeto, Long> quantidadeProjetosPorStatus = new EnumMap<>(StatusProjeto.class);
 
