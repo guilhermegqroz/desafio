@@ -101,8 +101,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         atualizarProjeto(projeto, dto);
 
-        Projeto projetoAtualizado =
-                projetoRepository.save(projeto);
+        Projeto projetoAtualizado = projetoRepository.save(projeto);
 
         return toDTO(projetoAtualizado);
     }
@@ -122,8 +121,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         Projeto projeto = buscarProjeto(id);
 
-        StatusProjeto novoStatus =
-                StatusProjeto.valueOf(status.toUpperCase());
+        StatusProjeto novoStatus = StatusProjeto.valueOf(status.toUpperCase());
 
         validarTransicaoStatus(projeto, novoStatus);
 
@@ -134,8 +132,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         projeto.setStatus(novoStatus);
 
-        Projeto projetoAtualizado =
-                projetoRepository.save(projeto);
+        Projeto projetoAtualizado = projetoRepository.save(projeto);
 
         return toDTO(projetoAtualizado);
     }
@@ -145,8 +142,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         Projeto projeto = buscarProjeto(projetoId);
 
-        MembroResponseDTO membro =
-                membroClientService.buscarMembro(membroId);
+        MembroResponseDTO membro = membroClientService.buscarMembro(membroId);
 
         validarFuncionario(membro);
 
