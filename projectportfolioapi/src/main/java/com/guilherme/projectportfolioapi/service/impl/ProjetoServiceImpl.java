@@ -15,10 +15,11 @@ import com.guilherme.projectportfolioapi.repository.ProjetoRepository;
 import com.guilherme.projectportfolioapi.service.ProjetoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -53,19 +54,32 @@ public class ProjetoServiceImpl implements ProjetoService {
                 calcularRisco(projetoSalvo)
         );
     }
-
     @Override
-    public List<ProjetoResponseDTO> listar() {
+    public Page<ProjetoResponseDTO> listar(String nome, String status, Pageable pageable) {
 
-        return projetoRepository.findAll()
-                .stream()
-                .map(projeto ->
-                        projetoMapper.toDTO(
-                                projeto,
-                                calcularRisco(projeto)
-                        )
+        Page<Projeto> projetos;
+
+        if (nome != null && !nome.isBlank()) {
+            projetos = projetoRepository
+                    .findByNomeContainingIgnoreCase(nome, pageable);
+
+        } else if (status != null && !status.isBlank()) {
+
+            StatusProjeto statusEnum = StatusProjeto.valueOf(status.toUpperCase());
+
+            projetos = projetoRepository
+                    .findByStatus(statusEnum, pageable);
+
+        } else {
+            projetos = projetoRepository.findAll(pageable);
+        }
+
+        return projetos.map(projeto ->
+                projetoMapper.toDTO(
+                        projeto,
+                        calcularRisco(projeto)
                 )
-                .toList();
+        );
     }
 
     @Override

@@ -5,7 +5,10 @@ import com.guilherme.projectportfolioapi.service.ProjetoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @RestController
 @RequestMapping("/projetos")
@@ -18,10 +21,16 @@ public class ProjetoController {
 	public ResponseEntity<ProjetoResponseDTO> criar(@RequestBody ProjetoRequestDTO dto) {
 		return ResponseEntity.ok(projetoService.criar(dto));
 	}
-
 	@GetMapping
-	public ResponseEntity<List <ProjetoResponseDTO>> listar() {
-		return ResponseEntity.ok(projetoService.listar());
+	public ResponseEntity<Page<ProjetoResponseDTO>> listar(
+			@RequestParam(required = false) String nome,
+			@RequestParam(required = false) String status,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "id") String sortBy
+	) {
+			Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+			return ResponseEntity.ok(projetoService.listar(nome, status, pageable));
 	}
 
 	@GetMapping("/{id}")

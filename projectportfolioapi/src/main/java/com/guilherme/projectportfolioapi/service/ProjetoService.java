@@ -2,14 +2,16 @@ package com.guilherme.projectportfolioapi.service;
 
 import com.guilherme.projectportfolioapi.dto.request.ProjetoRequestDTO;
 import com.guilherme.projectportfolioapi.dto.response.ProjetoResponseDTO;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ProjetoService {
 
     ProjetoResponseDTO criar(ProjetoRequestDTO dto);
 
-    List<ProjetoResponseDTO> listar();
+    //List<ProjetoResponseDTO> listar();
+
+    Page<ProjetoResponseDTO> listar(String nome, String status, Pageable pageable);
 
     ProjetoResponseDTO buscarPorId(Long id);
 
