@@ -15,38 +15,38 @@ public class ProjetoController {
 	private final ProjetoService projetoService;
 
 	@PostMapping
-	public ResponseEntity < ProjetoResponseDTO > criar(@RequestBody ProjetoRequestDTO dto) {
+	public ResponseEntity<ProjetoResponseDTO> criar(@RequestBody ProjetoRequestDTO dto) {
 		return ResponseEntity.ok(projetoService.criar(dto));
 	}
 
 	@GetMapping
-	public ResponseEntity < List < ProjetoResponseDTO >> listar() {
+	public ResponseEntity<List <ProjetoResponseDTO>> listar() {
 		return ResponseEntity.ok(projetoService.listar());
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity < ProjetoResponseDTO > buscarPorId(@PathVariable Long id) {
+	public ResponseEntity<ProjetoResponseDTO> buscarPorId(@PathVariable Long id) {
 		return ResponseEntity.ok(projetoService.buscarPorId(id));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity < ProjetoResponseDTO > atualizar(@PathVariable Long id, @RequestBody ProjetoRequestDTO dto) {
+	public ResponseEntity<ProjetoResponseDTO> atualizar(@PathVariable Long id, @RequestBody ProjetoRequestDTO dto) {
 		return ResponseEntity.ok(projetoService.atualizar(id, dto));
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity < Void > deletar(@PathVariable Long id) {
+	public ResponseEntity<Void> deletar(@PathVariable Long id) {
 		projetoService.deletar(id);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PatchMapping("/{id}/status")
-	public ResponseEntity < ProjetoResponseDTO > atualizarStatus(@PathVariable Long id, @RequestParam String status) {
+	public ResponseEntity<ProjetoResponseDTO> atualizarStatus(@PathVariable Long id, @RequestParam String status) {
 		return ResponseEntity.ok(projetoService.atualizarStatus(id, status));
 	}
 	
 	@PostMapping("/{projetoId}/membros/{membroId}")
-	public ResponseEntity < Void > associarMembro(@PathVariable Long projetoId, @PathVariable String membroId) {
+	public ResponseEntity<Void> associarMembro(@PathVariable Long projetoId, @PathVariable String membroId) {
 		projetoService.associarMembro(projetoId, membroId);
 		return ResponseEntity.ok().build();
 	}

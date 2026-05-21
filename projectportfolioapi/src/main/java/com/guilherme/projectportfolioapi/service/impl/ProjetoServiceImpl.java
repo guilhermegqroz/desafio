@@ -115,8 +115,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         Projeto projeto = buscarProjeto(id);
 
-        StatusProjeto novoStatus =
-                StatusProjeto.valueOf(status.toUpperCase());
+        StatusProjeto novoStatus = StatusProjeto.valueOf(status.toUpperCase());
 
         validarTransicaoStatus(projeto, novoStatus);
 
@@ -138,8 +137,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         Projeto projeto = buscarProjeto(projetoId);
 
-        MembroResponseDTO membro =
-                membroClientService.buscarMembro(membroId);
+        MembroResponseDTO membro = membroClientService.buscarMembro(membroId);
 
         validarFuncionario(membro);
 
@@ -167,24 +165,22 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     private void validarExclusaoProjeto(Projeto projeto) {
 
-        if (projeto.getStatus() == StatusProjeto.INICIADO
-                || projeto.getStatus() == StatusProjeto.EM_ANDAMENTO
-                || projeto.getStatus() == StatusProjeto.ENCERRADO) {
-
+        if (verificaStatusParaExclusao(projeto)) {
             throw new IllegalArgumentException(
                     "Não é permitido excluir projetos nesse status"
             );
         }
     }
 
-    private void validarTransicaoStatus(
-            Projeto projeto,
-            StatusProjeto novoStatus
-    ) {
+    private static boolean verificaStatusParaExclusao(Projeto projeto) {
+        return projeto.getStatus() == StatusProjeto.INICIADO
+                || projeto.getStatus() == StatusProjeto.EM_ANDAMENTO
+                || projeto.getStatus() == StatusProjeto.ENCERRADO;
+    }
 
-        if (!projeto.getStatus()
-                .podeTransicionarPara(novoStatus)) {
+    private void validarTransicaoStatus(Projeto projeto, StatusProjeto novoStatus) {
 
+        if (!projeto.getStatus().podeTransicionarPara(novoStatus)) {
             throw new IllegalArgumentException(
                     "Transição de status inválida"
             );
@@ -212,9 +208,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     private void validarFuncionario(MembroResponseDTO membro) {
 
-        if (!membro.getAtribuicao()
-                .equalsIgnoreCase("FUNCIONARIO")) {
-
+        if (!membro.getAtribuicao().equalsIgnoreCase("FUNCIONARIO")) {
             throw new IllegalArgumentException(
                     "Apenas FUNCIONARIOS podem ser associados."
             );
@@ -223,8 +217,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     private void validarLimiteMembrosProjeto(Long projetoId) {
 
-        long totalMembros =
-                projetoMembroRepository.countByProjetoId(projetoId);
+        long totalMembros = projetoMembroRepository.countByProjetoId(projetoId);
 
         if (totalMembros >= 10) {
 

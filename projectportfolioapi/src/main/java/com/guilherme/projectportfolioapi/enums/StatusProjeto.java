@@ -17,21 +17,22 @@ public enum StatusProjeto {
             return true;
         }
 
-        return switch (this) {
+        switch (this) {
 
-            case EM_ANALISE -> novoStatus == ANALISE_REALIZADA;
-
-            case ANALISE_REALIZADA -> novoStatus == ANALISE_APROVADA;
-
-            case ANALISE_APROVADA -> novoStatus == INICIADO;
-
-            case INICIADO -> novoStatus == PLANEJADO;
-
-            case PLANEJADO -> novoStatus == EM_ANDAMENTO;
-
-            case EM_ANDAMENTO -> novoStatus == ENCERRADO;
-
-            default -> false;
-        };
+            case EM_ANALISE:
+                return novoStatus == ANALISE_REALIZADA;
+            case ANALISE_REALIZADA:
+                return novoStatus == ANALISE_APROVADA;
+            case ANALISE_APROVADA:
+                return novoStatus == INICIADO;
+            case INICIADO:
+                return novoStatus == PLANEJADO;
+            case PLANEJADO:
+                return novoStatus == EM_ANDAMENTO;
+            case EM_ANDAMENTO:
+                return novoStatus == ENCERRADO;
+            default:
+                return false;
+        }
     }
 }
