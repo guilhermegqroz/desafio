@@ -257,11 +257,9 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         BigDecimal orcamento = projeto.getOrcamentoTotal();
 
-        boolean baixoRisco = possuiOrcamentoBaixo(orcamento)
-                && meses < 3;
+        boolean baixoRisco = possuiOrcamentoBaixo(orcamento) && meses < 3;
 
-        boolean medioRisco = possuiOrcamentoMedio(orcamento)
-                || (meses >= 3 && meses <= 6);
+        boolean medioRisco = possuiOrcamentoMedio(orcamento) || (meses >= 3 && meses <= 6);
 
         if (baixoRisco) {
             return ClassificacaoRisco.BAIXO;
