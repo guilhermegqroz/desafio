@@ -29,7 +29,7 @@ import java.util.List;
 public class ProjetoServiceImpl implements ProjetoService {
 
     private static final BigDecimal LIMITE_BAIXO = new BigDecimal("100000");
- 
+
     private static final BigDecimal LIMITE_MEDIO = new BigDecimal("500000");
 
     private final ProjetoRepository projetoRepository;
@@ -138,7 +138,7 @@ public class ProjetoServiceImpl implements ProjetoService {
     }
 
     @Override
-    public void associarMembro(Long projetoId, String membroId) {
+    public void associarMembro(Long projetoId, Long membroId) {
 
         Projeto projeto = buscarProjeto(projetoId);
 
@@ -251,7 +251,7 @@ public class ProjetoServiceImpl implements ProjetoService {
         }
     }
 
-    private void validarLimiteProjetosMembro(String membroId) {
+    private void validarLimiteProjetosMembro(Long membroId) {
 
         long projetosAtivos =
                 projetoMembroRepository

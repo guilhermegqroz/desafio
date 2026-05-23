@@ -62,15 +62,15 @@ class RelatorioServiceImplTest {
     void deveGerarResumoPortfolio() {
 
         ProjetoMembro membro1 = ProjetoMembro.builder()
-                .membroId("1")
+                .membroId(1L)
                 .build();
 
         ProjetoMembro membro2 = ProjetoMembro.builder()
-                .membroId("2")
+                .membroId(2L)
                 .build();
 
         ProjetoMembro membroDuplicado = ProjetoMembro.builder()
-                .membroId("1")
+                .membroId(1L)
                 .build();
 
         when(projetoRepository.findAll())

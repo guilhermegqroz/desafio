@@ -19,5 +19,5 @@ public interface ProjetoService {
     
     ProjetoResponseDTO atualizarStatus(Long id, String status);
 
-    void associarMembro(Long projetoId, String membroId);
+    void associarMembro(Long projetoId, Long membroId);
 }

@@ -16,7 +16,7 @@ public class MembroClientService {
 	@Value("${membro.api.url}")
 	private String membroApiUrl;
 
-	public MembroResponseDTO buscarMembro(String membroId) {
+	public MembroResponseDTO buscarMembro(Long membroId) {
 
 		String url = String.format("%s/%s", membroApiUrl, membroId);
 		try {

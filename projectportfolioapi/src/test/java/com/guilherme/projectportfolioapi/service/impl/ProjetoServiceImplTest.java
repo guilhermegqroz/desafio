@@ -319,18 +319,18 @@ class ProjetoServiceImplTest {
         when(projetoRepository.findById(1L))
                 .thenReturn(Optional.of(projeto));
 
-        when(membroClientService.buscarMembro("1"))
+        when(membroClientService.buscarMembro(1L))
                 .thenReturn(membro);
 
         when(projetoMembroRepository.countByProjetoId(1L))
                 .thenReturn(1L);
 
         when(projetoMembroRepository.countProjetosAtivosDoMembro(
-                eq("1"),
+                eq(1L),
                 anyList()
         )).thenReturn(1L);
 
-        service.associarMembro(1L, "1");
+        service.associarMembro(1L, 1L);
 
         verify(projetoMembroRepository).save(any());
     }
@@ -345,12 +345,12 @@ class ProjetoServiceImplTest {
         when(projetoRepository.findById(1L))
                 .thenReturn(Optional.of(projeto));
 
-        when(membroClientService.buscarMembro("1"))
+        when(membroClientService.buscarMembro(1L))
                 .thenReturn(membro);
 
         assertThrows(
                 NegocioException.class,
-                () -> service.associarMembro(1L, "1")
+                () -> service.associarMembro(1L, 1L)
         );
     }
 
@@ -364,7 +364,7 @@ class ProjetoServiceImplTest {
         when(projetoRepository.findById(1L))
                 .thenReturn(Optional.of(projeto));
 
-        when(membroClientService.buscarMembro("1"))
+        when(membroClientService.buscarMembro(1L))
                 .thenReturn(membro);
 
         when(projetoMembroRepository.countByProjetoId(1L))
@@ -372,7 +372,7 @@ class ProjetoServiceImplTest {
 
         assertThrows(
                 NegocioException.class,
-                () -> service.associarMembro(1L, "1")
+                () -> service.associarMembro(1L, 1L)
         );
     }
 
@@ -386,20 +386,20 @@ class ProjetoServiceImplTest {
         when(projetoRepository.findById(1L))
                 .thenReturn(Optional.of(projeto));
 
-        when(membroClientService.buscarMembro("1"))
+        when(membroClientService.buscarMembro(1L))
                 .thenReturn(membro);
 
         when(projetoMembroRepository.countByProjetoId(1L))
                 .thenReturn(1L);
 
         when(projetoMembroRepository.countProjetosAtivosDoMembro(
-                eq("1"),
+                eq(1L),
                 anyList()
         )).thenReturn(3L);
 
         assertThrows(
                 NegocioException.class,
-                () -> service.associarMembro(1L, "1")
+                () -> service.associarMembro(1L, 1L)
         );
     }
 }

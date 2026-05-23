@@ -55,7 +55,7 @@ public class ProjetoController {
 	}
 	
 	@PostMapping("/{projetoId}/membros/{membroId}")
-	public ResponseEntity<Void> associarMembro(@PathVariable Long projetoId, @PathVariable String membroId) {
+	public ResponseEntity<Void> associarMembro(@PathVariable Long projetoId, @PathVariable Long membroId) {
 		projetoService.associarMembro(projetoId, membroId);
 		return ResponseEntity.ok().build();
 	}

@@ -20,5 +20,5 @@ public class ProjetoMembro {
     @JoinColumn(name = "projeto_id")
     private Projeto projeto;
 
-    private String membroId;
+    private Long membroId;
 }

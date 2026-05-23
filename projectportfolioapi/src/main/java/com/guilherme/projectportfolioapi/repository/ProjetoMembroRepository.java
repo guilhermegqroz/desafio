@@ -19,5 +19,5 @@ public interface ProjetoMembroRepository
             WHERE pm.membroId = :membroId
             AND p.status NOT IN :status
             """)
-    long countProjetosAtivosDoMembro(String membroId, List<StatusProjeto> status);
+    long countProjetosAtivosDoMembro(Long membroId, List<StatusProjeto> status);
 }
