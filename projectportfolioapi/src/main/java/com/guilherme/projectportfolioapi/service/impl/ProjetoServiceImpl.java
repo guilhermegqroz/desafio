@@ -273,31 +273,30 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     private ClassificacaoRisco calcularRisco(Projeto projeto) {
 
-        long meses = ChronoUnit.MONTHS.between(
-                projeto.getDataInicio(),
-                projeto.getPrevisaoTermino()
-        );
+        long meses = ChronoUnit.MONTHS.between(projeto.getDataInicio(), projeto.getPrevisaoTermino());
 
-        BigDecimal orcamento =
-                projeto.getOrcamentoTotal();
+        BigDecimal orcamento = projeto.getOrcamentoTotal();
 
-        boolean baixoRisco =
-                orcamento.compareTo(LIMITE_BAIXO) <= 0
-                        && meses <= 3;
+        boolean baixoRisco = menorOuIgual(orcamento, LIMITE_BAIXO) && meses <= 3;
 
-        boolean medioRisco =
-                (orcamento.compareTo(LIMITE_BAIXO) > 0
-                        && orcamento.compareTo(LIMITE_MEDIO) <= 0)
-                        || (meses > 3 && meses <= 6);
+        boolean medioRisco = entre(orcamento, LIMITE_BAIXO, LIMITE_MEDIO) || (meses > 3 && meses <= 6);
 
-        if (baixoRisco) {
-            return ClassificacaoRisco.BAIXO;
-        }
+        if (baixoRisco) { return ClassificacaoRisco.BAIXO; }
 
-        if (medioRisco) {
-            return ClassificacaoRisco.MEDIO;
-        }
-
+        if (medioRisco) { return ClassificacaoRisco.MEDIO; }
         return ClassificacaoRisco.ALTO;
+    }
+
+    private boolean menorOuIgual(BigDecimal valor, BigDecimal limite) {
+        return valor.compareTo(limite) <= 0;
+    }
+
+    private boolean maior(BigDecimal valor, BigDecimal limite) {
+        return valor.compareTo(limite) > 0;
+    }
+
+    private boolean entre(BigDecimal valor, BigDecimal minimo, BigDecimal maximo) {
+        return maior(valor, minimo)
+                && menorOuIgual(valor, maximo);
     }
 }
