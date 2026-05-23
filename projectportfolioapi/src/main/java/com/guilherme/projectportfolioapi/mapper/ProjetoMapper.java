@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProjetoMapper {
 
-    public ProjetoResponseDTO toDTO(Projeto projeto,ClassificacaoRisco risco) {
+    public ProjetoResponseDTO toDTO(Projeto projeto, ClassificacaoRisco risco) {
 
         return new ProjetoResponseDTO(
                 projeto.getId(),
@@ -20,7 +20,6 @@ public class ProjetoMapper {
                 projeto.getDescricao(),
                 projeto.getGerenteId(),
                 projeto.getStatus(),
-                risco
-        );
+                risco);
     }
 }

@@ -51,8 +51,7 @@ public class ProjetoServiceImpl implements ProjetoService {
                 .status(StatusProjeto.EM_ANALISE)
                 .build();
 
-        Projeto projetoSalvo =
-                projetoRepository.save(projeto);
+        Projeto projetoSalvo = projetoRepository.save(projeto);
 
         return toDTO(projetoSalvo);
     }
@@ -67,13 +66,11 @@ public class ProjetoServiceImpl implements ProjetoService {
             projetos = projetoRepository
                     .findByNomeContainingIgnoreCase(
                             nome,
-                            pageable
-                    );
+                            pageable);
 
         } else if (StringUtils.hasText(status)) {
 
-            StatusProjeto statusEnum =
-                    StatusProjeto.valueOf(status.toUpperCase());
+            StatusProjeto statusEnum = StatusProjeto.valueOf(status.toUpperCase());
 
             projetos = projetoRepository
                     .findByStatus(statusEnum, pageable);
@@ -127,8 +124,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         validarProjetoEncerradoComMembros(
                 id,
-                novoStatus
-        );
+                novoStatus);
 
         projeto.setStatus(novoStatus);
 
@@ -150,11 +146,10 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         validarLimiteProjetosMembro(membroId);
 
-        ProjetoMembro projetoMembro =
-                ProjetoMembro.builder()
-                        .projeto(projeto)
-                        .membroId(membroId)
-                        .build();
+        ProjetoMembro projetoMembro = ProjetoMembro.builder()
+                .projeto(projeto)
+                .membroId(membroId)
+                .build();
 
         projetoMembroRepository.save(projetoMembro);
     }
@@ -162,19 +157,15 @@ public class ProjetoServiceImpl implements ProjetoService {
     private Projeto buscarProjeto(Long id) {
 
         return projetoRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Projeto não encontrado."
-                        )
-                );
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Projeto não encontrado."));
     }
 
     private ProjetoResponseDTO toDTO(Projeto projeto) {
 
         return projetoMapper.toDTO(
                 projeto,
-                calcularRisco(projeto)
-        );
+                calcularRisco(projeto));
     }
 
     private void atualizarProjeto(Projeto projeto, ProjetoRequestDTO dto) {
@@ -194,8 +185,7 @@ public class ProjetoServiceImpl implements ProjetoService {
                 || projeto.getStatus() == StatusProjeto.ENCERRADO) {
 
             throw new NegocioException(
-                    "Não é permitido excluir projetos nesse status."
-            );
+                    "Não é permitido excluir projetos nesse status.");
         }
     }
 
@@ -204,8 +194,7 @@ public class ProjetoServiceImpl implements ProjetoService {
                 .podeTransicionarPara(novoStatus)) {
 
             throw new NegocioException(
-                    "Transição de status inválida."
-            );
+                    "Transição de status inválida.");
         }
     }
 
@@ -213,15 +202,13 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         if (novoStatus == StatusProjeto.ENCERRADO) {
 
-            long totalMembros =
-                    projetoMembroRepository
-                            .countByProjetoId(projetoId);
+            long totalMembros = projetoMembroRepository
+                    .countByProjetoId(projetoId);
 
             if (totalMembros < 1) {
 
                 throw new NegocioException(
-                        "Projeto deve possuir ao menos 1 membro."
-                );
+                        "Projeto deve possuir ao menos 1 membro.");
             }
         }
     }
@@ -232,42 +219,35 @@ public class ProjetoServiceImpl implements ProjetoService {
                 .equalsIgnoreCase("FUNCIONARIO")) {
 
             throw new NegocioException(
-                    "Apenas FUNCIONARIOS podem ser associados."
-            );
+                    "Apenas FUNCIONARIOS podem ser associados.");
         }
     }
 
     private void validarLimiteMembrosProjeto(Long projetoId) {
 
-        long totalMembros =
-                projetoMembroRepository
-                        .countByProjetoId(projetoId);
+        long totalMembros = projetoMembroRepository
+                .countByProjetoId(projetoId);
 
         if (totalMembros >= 10) {
 
             throw new NegocioException(
-                    "Projeto já possui 10 membros."
-            );
+                    "Projeto já possui 10 membros.");
         }
     }
 
     private void validarLimiteProjetosMembro(Long membroId) {
 
-        long projetosAtivos =
-                projetoMembroRepository
-                        .countProjetosAtivosDoMembro(
-                                membroId,
-                                List.of(
-                                        StatusProjeto.ENCERRADO,
-                                        StatusProjeto.CANCELADO
-                                )
-                        );
+        long projetosAtivos = projetoMembroRepository
+                .countProjetosAtivosDoMembro(
+                        membroId,
+                        List.of(
+                                StatusProjeto.ENCERRADO,
+                                StatusProjeto.CANCELADO));
 
         if (projetosAtivos >= 3) {
 
             throw new NegocioException(
-                    "Membro já participa de 3 projetos ativos."
-            );
+                    "Membro já participa de 3 projetos ativos.");
         }
     }
 
@@ -277,26 +257,37 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         BigDecimal orcamento = projeto.getOrcamentoTotal();
 
-        boolean baixoRisco = menorOuIgual(orcamento, LIMITE_BAIXO) && meses <= 3;
+        boolean baixoRisco = possuiOrcamentoBaixo(orcamento)
+                && meses < 3;
 
-        boolean medioRisco = entre(orcamento, LIMITE_BAIXO, LIMITE_MEDIO) || (meses > 3 && meses <= 6);
+        boolean medioRisco = possuiOrcamentoMedio(orcamento)
+                || (meses >= 3 && meses <= 6);
 
-        if (baixoRisco) { return ClassificacaoRisco.BAIXO; }
+        if (baixoRisco) {
+            return ClassificacaoRisco.BAIXO;
+        }
 
-        if (medioRisco) { return ClassificacaoRisco.MEDIO; }
+        if (medioRisco) {
+            return ClassificacaoRisco.MEDIO;
+        }
+
         return ClassificacaoRisco.ALTO;
+    }
+
+    private boolean possuiOrcamentoBaixo(BigDecimal orcamento) {
+        return menorOuIgual(orcamento, LIMITE_BAIXO);
+    }
+
+    private boolean possuiOrcamentoMedio(BigDecimal orcamento) {
+        return maiorQue(orcamento, LIMITE_BAIXO)
+                && menorOuIgual(orcamento, LIMITE_MEDIO);
     }
 
     private boolean menorOuIgual(BigDecimal valor, BigDecimal limite) {
         return valor.compareTo(limite) <= 0;
     }
 
-    private boolean maior(BigDecimal valor, BigDecimal limite) {
+    private boolean maiorQue(BigDecimal valor, BigDecimal limite) {
         return valor.compareTo(limite) > 0;
-    }
-
-    private boolean entre(BigDecimal valor, BigDecimal minimo, BigDecimal maximo) {
-        return maior(valor, minimo)
-                && menorOuIgual(valor, maximo);
     }
 }

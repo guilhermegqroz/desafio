@@ -32,374 +32,356 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProjetoServiceImplTest {
 
-    @InjectMocks
-    private ProjetoServiceImpl service;
+        @InjectMocks
+        private ProjetoServiceImpl service;
 
-    @Mock
-    private ProjetoRepository projetoRepository;
+        @Mock
+        private ProjetoRepository projetoRepository;
 
-    @Mock
-    private ProjetoMapper projetoMapper;
+        @Mock
+        private ProjetoMapper projetoMapper;
 
-    @Mock
-    private ProjetoMembroRepository projetoMembroRepository;
+        @Mock
+        private ProjetoMembroRepository projetoMembroRepository;
 
-    @Mock
-    private MembroClientService membroClientService;
+        @Mock
+        private MembroClientService membroClientService;
 
-    private Projeto projeto;
+        private Projeto projeto;
 
-    private ProjetoRequestDTO requestDTO;
+        private ProjetoRequestDTO requestDTO;
 
-    private ProjetoResponseDTO responseDTO;
+        private ProjetoResponseDTO responseDTO;
 
-    @BeforeEach
-    void setup() {
+        @BeforeEach
+        void setup() {
 
-        projeto = Projeto.builder()
-                .id(1L)
-                .nome("Projeto Teste")
-                .descricao("Descricao")
-                .orcamentoTotal(new BigDecimal("1000"))
-                .dataInicio(LocalDate.now())
-                .previsaoTermino(LocalDate.now().plusMonths(2))
-                .status(StatusProjeto.EM_ANALISE)
-                .gerenteId(1L)
-                .build();
+                projeto = Projeto.builder()
+                                .id(1L)
+                                .nome("Projeto Teste")
+                                .descricao("Descricao")
+                                .orcamentoTotal(new BigDecimal("1000"))
+                                .dataInicio(LocalDate.now())
+                                .previsaoTermino(LocalDate.now().plusMonths(2))
+                                .status(StatusProjeto.EM_ANALISE)
+                                .gerenteId(1L)
+                                .build();
 
-        requestDTO = new ProjetoRequestDTO();
+                requestDTO = new ProjetoRequestDTO();
 
-        requestDTO.setNome("Projeto Teste");
-        requestDTO.setDescricao("Descricao");
-        requestDTO.setOrcamentoTotal(new BigDecimal("1000"));
-        requestDTO.setDataInicio(LocalDate.now());
-        requestDTO.setPrevisaoTermino(LocalDate.now().plusMonths(2));
-        requestDTO.setGerenteId(1L);
+                requestDTO.setNome("Projeto Teste");
+                requestDTO.setDescricao("Descricao");
+                requestDTO.setOrcamentoTotal(new BigDecimal("1000"));
+                requestDTO.setDataInicio(LocalDate.now());
+                requestDTO.setPrevisaoTermino(LocalDate.now().plusMonths(2));
+                requestDTO.setGerenteId(1L);
 
-        responseDTO = new ProjetoResponseDTO();
-    }
+                responseDTO = new ProjetoResponseDTO();
+        }
 
-    @Test
-    void deveCriarProjetoComSucesso() {
+        @Test
+        void deveCriarProjetoComSucesso() {
 
-        when(projetoRepository.save(any(Projeto.class)))
-                .thenReturn(projeto);
+                when(projetoRepository.save(any(Projeto.class)))
+                                .thenReturn(projeto);
 
-        when(projetoMapper.toDTO(any(), any()))
-                .thenReturn(responseDTO);
+                when(projetoMapper.toDTO(any(), any()))
+                                .thenReturn(responseDTO);
 
-        ProjetoResponseDTO response = service.criar(requestDTO);
+                ProjetoResponseDTO response = service.criar(requestDTO);
 
-        assertNotNull(response);
+                assertNotNull(response);
 
-        verify(projetoRepository).save(any(Projeto.class));
-    }
+                verify(projetoRepository).save(any(Projeto.class));
+        }
 
-    @Test
-    void deveListarProjetos() {
+        @Test
+        void deveListarProjetos() {
 
-        when(projetoRepository.findAll(any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(List.of(projeto)));
+                when(projetoRepository.findAll(any(PageRequest.class)))
+                                .thenReturn(new PageImpl<>(List.of(projeto)));
 
-        when(projetoMapper.toDTO(any(), any()))
-                .thenReturn(responseDTO);
+                when(projetoMapper.toDTO(any(), any()))
+                                .thenReturn(responseDTO);
 
-        var response = service.listar(
-                null,
-                null,
-                PageRequest.of(0, 10)
-        );
+                var response = service.listar(
+                                null,
+                                null,
+                                PageRequest.of(0, 10));
 
-        assertEquals(1, response.getTotalElements());
-    }
+                assertEquals(1, response.getTotalElements());
+        }
 
-    @Test
-    void deveListarProjetosPorNome() {
+        @Test
+        void deveListarProjetosPorNome() {
 
-        when(projetoRepository.findByNomeContainingIgnoreCase(
-                eq("Projeto"),
-                any(PageRequest.class)
-        )).thenReturn(new PageImpl<>(List.of(projeto)));
+                when(projetoRepository.findByNomeContainingIgnoreCase(
+                                eq("Projeto"),
+                                any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(projeto)));
 
-        when(projetoMapper.toDTO(any(), any()))
-                .thenReturn(responseDTO);
+                when(projetoMapper.toDTO(any(), any()))
+                                .thenReturn(responseDTO);
 
-        var response = service.listar(
-                "Projeto",
-                null,
-                PageRequest.of(0, 10)
-        );
+                var response = service.listar(
+                                "Projeto",
+                                null,
+                                PageRequest.of(0, 10));
 
-        assertEquals(1, response.getTotalElements());
-    }
+                assertEquals(1, response.getTotalElements());
+        }
 
-    @Test
-    void deveListarProjetosPorStatus() {
+        @Test
+        void deveListarProjetosPorStatus() {
 
-        when(projetoRepository.findByStatus(
-                eq(StatusProjeto.EM_ANALISE),
-                any(PageRequest.class)
-        )).thenReturn(new PageImpl<>(List.of(projeto)));
+                when(projetoRepository.findByStatus(
+                                eq(StatusProjeto.EM_ANALISE),
+                                any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(projeto)));
 
-        when(projetoMapper.toDTO(any(), any()))
-                .thenReturn(responseDTO);
+                when(projetoMapper.toDTO(any(), any()))
+                                .thenReturn(responseDTO);
 
-        var response = service.listar(
-                null,
-                "EM_ANALISE",
-                PageRequest.of(0, 10)
-        );
+                var response = service.listar(
+                                null,
+                                "EM_ANALISE",
+                                PageRequest.of(0, 10));
 
-        assertEquals(1, response.getTotalElements());
-    }
+                assertEquals(1, response.getTotalElements());
+        }
 
-    @Test
-    void deveBuscarProjetoPorId() {
+        @Test
+        void deveBuscarProjetoPorId() {
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        when(projetoMapper.toDTO(any(), any()))
-                .thenReturn(responseDTO);
+                when(projetoMapper.toDTO(any(), any()))
+                                .thenReturn(responseDTO);
 
-        ProjetoResponseDTO response = service.buscarPorId(1L);
+                ProjetoResponseDTO response = service.buscarPorId(1L);
 
-        assertNotNull(response);
+                assertNotNull(response);
 
-        verify(projetoRepository).findById(1L);
-    }
+                verify(projetoRepository).findById(1L);
+        }
 
-    @Test
-    void deveLancarExcecaoQuandoProjetoNaoEncontrado() {
+        @Test
+        void deveLancarExcecaoQuandoProjetoNaoEncontrado() {
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.empty());
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.empty());
 
-        assertThrows(
-                ResourceNotFoundException.class,
-                () -> service.buscarPorId(1L)
-        );
-    }
+                assertThrows(
+                                ResourceNotFoundException.class,
+                                () -> service.buscarPorId(1L));
+        }
 
-    @Test
-    void deveAtualizarProjeto() {
+        @Test
+        void deveAtualizarProjeto() {
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        when(projetoRepository.save(any()))
-                .thenReturn(projeto);
+                when(projetoRepository.save(any()))
+                                .thenReturn(projeto);
 
-        when(projetoMapper.toDTO(any(), any()))
-                .thenReturn(responseDTO);
+                when(projetoMapper.toDTO(any(), any()))
+                                .thenReturn(responseDTO);
 
-        ProjetoResponseDTO response =
-                service.atualizar(1L, requestDTO);
+                ProjetoResponseDTO response = service.atualizar(1L, requestDTO);
 
-        assertNotNull(response);
+                assertNotNull(response);
 
-        verify(projetoRepository).save(any());
-    }
+                verify(projetoRepository).save(any());
+        }
 
-    @Test
-    void deveDeletarProjeto() {
+        @Test
+        void deveDeletarProjeto() {
 
-        projeto.setStatus(StatusProjeto.EM_ANALISE);
+                projeto.setStatus(StatusProjeto.EM_ANALISE);
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        service.deletar(1L);
+                service.deletar(1L);
 
-        verify(projetoRepository).delete(projeto);
-    }
+                verify(projetoRepository).delete(projeto);
+        }
 
-    @Test
-    void naoDeveDeletarProjetoIniciado() {
+        @Test
+        void naoDeveDeletarProjetoIniciado() {
 
-        projeto.setStatus(StatusProjeto.INICIADO);
+                projeto.setStatus(StatusProjeto.INICIADO);
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        assertThrows(
-                NegocioException.class,
-                () -> service.deletar(1L)
-        );
-    }
+                assertThrows(
+                                NegocioException.class,
+                                () -> service.deletar(1L));
+        }
 
-    @Test
-    void naoDeveDeletarProjetoEmAndamento() {
+        @Test
+        void naoDeveDeletarProjetoEmAndamento() {
 
-        projeto.setStatus(StatusProjeto.EM_ANDAMENTO);
+                projeto.setStatus(StatusProjeto.EM_ANDAMENTO);
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        assertThrows(
-                NegocioException.class,
-                () -> service.deletar(1L)
-        );
-    }
+                assertThrows(
+                                NegocioException.class,
+                                () -> service.deletar(1L));
+        }
 
-    @Test
-    void naoDeveDeletarProjetoEncerrado() {
+        @Test
+        void naoDeveDeletarProjetoEncerrado() {
 
-        projeto.setStatus(StatusProjeto.ENCERRADO);
+                projeto.setStatus(StatusProjeto.ENCERRADO);
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        assertThrows(
-                NegocioException.class,
-                () -> service.deletar(1L)
-        );
-    }
+                assertThrows(
+                                NegocioException.class,
+                                () -> service.deletar(1L));
+        }
 
-    @Test
-    void deveAtualizarStatus() {
+        @Test
+        void deveAtualizarStatus() {
 
-        projeto.setStatus(StatusProjeto.EM_ANALISE);
+                projeto.setStatus(StatusProjeto.EM_ANALISE);
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        when(projetoRepository.save(any()))
-                .thenReturn(projeto);
+                when(projetoRepository.save(any()))
+                                .thenReturn(projeto);
 
-        when(projetoMapper.toDTO(any(), any()))
-                .thenReturn(responseDTO);
+                when(projetoMapper.toDTO(any(), any()))
+                                .thenReturn(responseDTO);
 
-        ProjetoResponseDTO response =
-                service.atualizarStatus(1L, "ANALISE_REALIZADA");
+                ProjetoResponseDTO response = service.atualizarStatus(1L, "ANALISE_REALIZADA");
 
-        assertNotNull(response);
+                assertNotNull(response);
 
-        verify(projetoRepository).save(any());
-    }
+                verify(projetoRepository).save(any());
+        }
 
-    @Test
-    void naoDeveAtualizarStatusInvalido() {
+        @Test
+        void naoDeveAtualizarStatusInvalido() {
 
-        projeto.setStatus(StatusProjeto.ENCERRADO);
+                projeto.setStatus(StatusProjeto.ENCERRADO);
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        assertThrows(
-                NegocioException.class,
-                () -> service.atualizarStatus(1L, "EM_ANALISE")
-        );
-    }
+                assertThrows(
+                                NegocioException.class,
+                                () -> service.atualizarStatus(1L, "EM_ANALISE"));
+        }
 
-    @Test
-    void naoDeveEncerrarProjetoSemMembros() {
+        @Test
+        void naoDeveEncerrarProjetoSemMembros() {
 
-        projeto.setStatus(StatusProjeto.EM_ANDAMENTO);
+                projeto.setStatus(StatusProjeto.EM_ANDAMENTO);
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        when(projetoMembroRepository.countByProjetoId(1L))
-                .thenReturn(0L);
+                when(projetoMembroRepository.countByProjetoId(1L))
+                                .thenReturn(0L);
 
-        assertThrows(
-                NegocioException.class,
-                () -> service.atualizarStatus(1L, "ENCERRADO")
-        );
-    }
+                assertThrows(
+                                NegocioException.class,
+                                () -> service.atualizarStatus(1L, "ENCERRADO"));
+        }
 
-    @Test
-    void deveAssociarMembro() {
+        @Test
+        void deveAssociarMembro() {
 
-        MembroResponseDTO membro = new MembroResponseDTO();
+                MembroResponseDTO membro = new MembroResponseDTO();
 
-        membro.setAtribuicao("FUNCIONARIO");
+                membro.setAtribuicao("FUNCIONARIO");
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        when(membroClientService.buscarMembro(1L))
-                .thenReturn(membro);
+                when(membroClientService.buscarMembro(1L))
+                                .thenReturn(membro);
 
-        when(projetoMembroRepository.countByProjetoId(1L))
-                .thenReturn(1L);
+                when(projetoMembroRepository.countByProjetoId(1L))
+                                .thenReturn(1L);
 
-        when(projetoMembroRepository.countProjetosAtivosDoMembro(
-                eq(1L),
-                anyList()
-        )).thenReturn(1L);
+                when(projetoMembroRepository.countProjetosAtivosDoMembro(
+                                eq(1L),
+                                anyList())).thenReturn(1L);
 
-        service.associarMembro(1L, 1L);
+                service.associarMembro(1L, 1L);
 
-        verify(projetoMembroRepository).save(any());
-    }
+                verify(projetoMembroRepository).save(any());
+        }
 
-    @Test
-    void naoDeveAssociarMembroNaoFuncionario() {
+        @Test
+        void naoDeveAssociarMembroNaoFuncionario() {
 
-        MembroResponseDTO membro = new MembroResponseDTO();
+                MembroResponseDTO membro = new MembroResponseDTO();
 
-        membro.setAtribuicao("TERCEIRO");
+                membro.setAtribuicao("TERCEIRO");
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        when(membroClientService.buscarMembro(1L))
-                .thenReturn(membro);
+                when(membroClientService.buscarMembro(1L))
+                                .thenReturn(membro);
 
-        assertThrows(
-                NegocioException.class,
-                () -> service.associarMembro(1L, 1L)
-        );
-    }
+                assertThrows(
+                                NegocioException.class,
+                                () -> service.associarMembro(1L, 1L));
+        }
 
-    @Test
-    void naoDeveAssociarMaisDe10Membros() {
+        @Test
+        void naoDeveAssociarMaisDe10Membros() {
 
-        MembroResponseDTO membro = new MembroResponseDTO();
+                MembroResponseDTO membro = new MembroResponseDTO();
 
-        membro.setAtribuicao("FUNCIONARIO");
+                membro.setAtribuicao("FUNCIONARIO");
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        when(membroClientService.buscarMembro(1L))
-                .thenReturn(membro);
+                when(membroClientService.buscarMembro(1L))
+                                .thenReturn(membro);
 
-        when(projetoMembroRepository.countByProjetoId(1L))
-                .thenReturn(10L);
+                when(projetoMembroRepository.countByProjetoId(1L))
+                                .thenReturn(10L);
 
-        assertThrows(
-                NegocioException.class,
-                () -> service.associarMembro(1L, 1L)
-        );
-    }
+                assertThrows(
+                                NegocioException.class,
+                                () -> service.associarMembro(1L, 1L));
+        }
 
-    @Test
-    void naoDeveAssociarMembroEmMaisDe3Projetos() {
+        @Test
+        void naoDeveAssociarMembroEmMaisDe3Projetos() {
 
-        MembroResponseDTO membro = new MembroResponseDTO();
+                MembroResponseDTO membro = new MembroResponseDTO();
 
-        membro.setAtribuicao("FUNCIONARIO");
+                membro.setAtribuicao("FUNCIONARIO");
 
-        when(projetoRepository.findById(1L))
-                .thenReturn(Optional.of(projeto));
+                when(projetoRepository.findById(1L))
+                                .thenReturn(Optional.of(projeto));
 
-        when(membroClientService.buscarMembro(1L))
-                .thenReturn(membro);
+                when(membroClientService.buscarMembro(1L))
+                                .thenReturn(membro);
 
-        when(projetoMembroRepository.countByProjetoId(1L))
-                .thenReturn(1L);
+                when(projetoMembroRepository.countByProjetoId(1L))
+                                .thenReturn(1L);
 
-        when(projetoMembroRepository.countProjetosAtivosDoMembro(
-                eq(1L),
-                anyList()
-        )).thenReturn(3L);
+                when(projetoMembroRepository.countProjetosAtivosDoMembro(
+                                eq(1L),
+                                anyList())).thenReturn(3L);
 
-        assertThrows(
-                NegocioException.class,
-                () -> service.associarMembro(1L, 1L)
-        );
-    }
+                assertThrows(
+                                NegocioException.class,
+                                () -> service.associarMembro(1L, 1L));
+        }
 }

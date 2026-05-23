@@ -1,4 +1,5 @@
 package com.guilherme.projectportfolioapi.client;
+
 import com.guilherme.projectportfolioapi.dto.response.MembroResponseDTO;
 import com.guilherme.projectportfolioapi.exception.NegocioException;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class MembroClientService {
 
-    private final RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 
 	@Value("${membro.api.url}")
 	private String membroApiUrl;
@@ -23,8 +24,7 @@ public class MembroClientService {
 			return restTemplate.getForObject(url, MembroResponseDTO.class);
 		} catch (RestClientException ex) {
 			throw new NegocioException(
-					"Erro ao buscar membro na API externa."
-			);
+					"Erro ao buscar membro na API externa.");
 		}
 	}
 }

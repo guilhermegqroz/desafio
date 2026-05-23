@@ -19,84 +19,65 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class RelatorioServiceImpl implements RelatorioService {
 
-    private final ProjetoRepository projetoRepository;
+        private final ProjetoRepository projetoRepository;
 
-    private final ProjetoMembroRepository projetoMembroRepository;
+        private final ProjetoMembroRepository projetoMembroRepository;
 
-    @Override
-    public PortfolioResumoDTO gerarResumoPortfolio() {
+        @Override
+        public PortfolioResumoDTO gerarResumoPortfolio() {
 
-        List<Projeto> projetos = projetoRepository.findAll();
+                List<Projeto> projetos = projetoRepository.findAll();
 
-        Map<StatusProjeto, Long> quantidadeProjetosPorStatus = new EnumMap<>(StatusProjeto.class);
+                Map<StatusProjeto, Long> quantidadeProjetosPorStatus = new EnumMap<>(StatusProjeto.class);
 
-        Map<StatusProjeto, BigDecimal> totalOrcadoPorStatus = new EnumMap<>(StatusProjeto.class);
+                Map<StatusProjeto, BigDecimal> totalOrcadoPorStatus = new EnumMap<>(StatusProjeto.class);
 
-        for (Projeto projeto : projetos) {
+                for (Projeto projeto : projetos) {
 
-            StatusProjeto status = projeto.getStatus();
+                        StatusProjeto status = projeto.getStatus();
 
-            quantidadeProjetosPorStatus.put(
-                    status,
-                    quantidadeProjetosPorStatus
-                            .getOrDefault(status, 0L) + 1
-            );
+                        quantidadeProjetosPorStatus.put(
+                                        status,
+                                        quantidadeProjetosPorStatus
+                                                        .getOrDefault(status, 0L) + 1);
 
-            totalOrcadoPorStatus.put(
-                    status,
-                    totalOrcadoPorStatus
-                            .getOrDefault(
-                                    status,
-                                    BigDecimal.ZERO
-                            )
-                            .add(projeto.getOrcamentoTotal())
-            );
+                        totalOrcadoPorStatus.put(
+                                        status,
+                                        totalOrcadoPorStatus
+                                                        .getOrDefault(
+                                                                        status,
+                                                                        BigDecimal.ZERO)
+                                                        .add(projeto.getOrcamentoTotal()));
+                }
+
+                List<Projeto> projetosEncerrados = projetos.stream()
+                                .filter(projeto -> projeto.getStatus() == StatusProjeto.ENCERRADO)
+                                .toList();
+
+                double mediaDuracaoProjetosEncerrados = projetosEncerrados.stream()
+                                .mapToLong(projeto -> ChronoUnit.DAYS.between(
+                                                projeto.getDataInicio(),
+                                                projeto.getDataRealTermino()))
+                                .average()
+                                .orElse(0.0);
+
+                long totalMembrosUnicosAlocados = projetoMembroRepository
+                                .findAll()
+                                .stream()
+                                .map(projetoMembro -> projetoMembro.getMembroId())
+                                .distinct()
+                                .count();
+
+                return PortfolioResumoDTO.builder()
+                                .quantidadeProjetosPorStatus(
+                                                quantidadeProjetosPorStatus)
+                                .totalOrcadoPorStatus(
+                                                totalOrcadoPorStatus)
+                                .mediaDuracaoProjetosEncerrados(
+                                                mediaDuracaoProjetosEncerrados)
+                                .totalMembrosUnicosAlocados(
+                                                totalMembrosUnicosAlocados)
+                                .build();
         }
 
-        List<Projeto> projetosEncerrados =
-                projetos.stream()
-                        .filter(projeto ->
-                                projeto.getStatus()
-                                        == StatusProjeto.ENCERRADO
-                        )
-                        .toList();
-
-        double mediaDuracaoProjetosEncerrados =
-                projetosEncerrados.stream()
-                        .mapToLong(projeto ->
-                                ChronoUnit.DAYS.between(
-                                        projeto.getDataInicio(),
-                                        projeto.getDataRealTermino()
-                                )
-                        )
-                        .average()
-                        .orElse(0.0);
-
-        long totalMembrosUnicosAlocados =
-                projetoMembroRepository
-                        .findAll()
-                        .stream()
-                        .map(projetoMembro ->
-                                projetoMembro.getMembroId()
-                        )
-                        .distinct()
-                        .count();
-
-        return PortfolioResumoDTO.builder()
-                .quantidadeProjetosPorStatus(
-                        quantidadeProjetosPorStatus
-                )
-                .totalOrcadoPorStatus(
-                        totalOrcadoPorStatus
-                )
-                .mediaDuracaoProjetosEncerrados(
-                        mediaDuracaoProjetosEncerrados
-                )
-                .totalMembrosUnicosAlocados(
-                        totalMembrosUnicosAlocados
-                )
-                .build();
-    }
-
 }
-

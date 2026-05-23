@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ProjetoMembroRepository
-        extends JpaRepository<ProjetoMembro, Long> {
+public interface ProjetoMembroRepository extends JpaRepository<ProjetoMembro, Long> {
 
     long countByProjetoId(Long projetoId);
 
