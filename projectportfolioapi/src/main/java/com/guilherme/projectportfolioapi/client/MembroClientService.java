@@ -23,8 +23,7 @@ public class MembroClientService {
 		try {
 			return restTemplate.getForObject(url, MembroResponseDTO.class);
 		} catch (RestClientException ex) {
-			throw new NegocioException(
-					"Erro ao buscar membro na API externa.");
+			throw new NegocioException("Erro ao buscar membro na API externa.");
 		}
 	}
 }
