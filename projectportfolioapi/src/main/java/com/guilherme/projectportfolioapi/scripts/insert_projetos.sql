@@ -11,96 +11,184 @@ INSERT INTO projetos (
 
 -- EM_ANALISE
 (
-    'Projeto Financeiro',
-    '2026-01-01',
-    '2026-03-01',
+    'Sistema Bancário',
+    '2026-05-01',
+    '2026-09-01',
     NULL,
-    80000,
-    'Projeto em análise',
-    1,
+    95000,
+    'Projeto em análise inicial',
+    9,
+    'EM_ANALISE'
+),
+
+(
+    'Portal Educacional',
+    '2026-06-10',
+    '2026-11-15',
+    NULL,
+    110000,
+    'Projeto aguardando análise',
+    10,
     'EM_ANALISE'
 ),
 
 -- ANALISE_REALIZADA
 (
-    'Portal RH',
-    '2026-02-01',
-    '2026-06-01',
+    'Sistema Hospitalar',
+    '2026-01-20',
+    '2026-07-30',
     NULL,
-    150000,
+    220000,
+    'Análise concluída',
+    11,
+    'ANALISE_REALIZADA'
+),
+
+(
+    'Plataforma Streaming',
+    '2026-03-15',
+    '2026-10-20',
+    NULL,
+    450000,
     'Projeto com análise realizada',
-    2,
+    12,
     'ANALISE_REALIZADA'
 ),
 
 -- ANALISE_APROVADA
 (
-    'Sistema Logistica',
-    '2026-01-15',
-    '2026-07-15',
+    'Marketplace Digital',
+    '2026-02-01',
+    '2026-12-01',
     NULL,
-    250000,
+    650000,
+    'Projeto aprovado para execução',
+    13,
+    'ANALISE_APROVADA'
+),
+
+(
+    'Sistema Jurídico',
+    '2026-04-12',
+    '2026-09-12',
+    NULL,
+    180000,
     'Projeto aprovado',
-    3,
+    14,
     'ANALISE_APROVADA'
 ),
 
 -- INICIADO
 (
-    'ERP Corporativo',
-    '2026-03-01',
-    '2026-12-01',
+    'Plataforma de Cursos',
+    '2026-01-05',
+    '2026-08-05',
     NULL,
-    900000,
-    'Projeto iniciado',
-    4,
+    350000,
+    'Projeto iniciado recentemente',
+    15,
+    'INICIADO'
+),
+
+(
+    'Sistema de Delivery',
+    '2026-02-18',
+    '2026-11-18',
+    NULL,
+    500000,
+    'Execução iniciada',
+    16,
     'INICIADO'
 ),
 
 -- PLANEJADO
 (
-    'Aplicativo Mobile',
-    '2026-04-01',
-    '2026-08-01',
+    'Aplicação de Investimentos',
+    '2026-07-01',
+    '2027-01-01',
     NULL,
-    120000,
-    'Projeto planejado',
-    5,
+    275000,
+    'Projeto em fase de planejamento',
+    17,
+    'PLANEJADO'
+),
+
+(
+    'Sistema de Eventos',
+    '2026-08-10',
+    '2027-02-15',
+    NULL,
+    145000,
+    'Planejamento inicial',
+    18,
     'PLANEJADO'
 ),
 
 -- EM_ANDAMENTO
 (
-    'Sistema Compras',
-    '2026-02-10',
-    '2026-09-10',
+    'CRM Empresarial',
+    '2026-01-15',
+    '2026-10-15',
     NULL,
-    300000,
+    720000,
+    'Projeto em desenvolvimento',
+    19,
+    'EM_ANDAMENTO'
+),
+
+(
+    'Sistema de Segurança',
+    '2026-03-01',
+    '2026-12-20',
+    NULL,
+    980000,
     'Projeto em andamento',
-    6,
+    20,
     'EM_ANDAMENTO'
 ),
 
 -- ENCERRADO
 (
-    'Sistema Antigo',
-    '2025-01-01',
-    '2025-06-01',
-    '2025-05-20',
-    500000,
+    'Portal Corporativo',
+    '2025-02-01',
+    '2025-09-01',
+    '2025-08-20',
+    310000,
+    'Projeto finalizado com sucesso',
+    21,
+    'ENCERRADO'
+),
+
+(
+    'Sistema Acadêmico',
+    '2025-01-10',
+    '2025-07-10',
+    '2025-07-01',
+    210000,
     'Projeto encerrado',
-    7,
+    22,
     'ENCERRADO'
 ),
 
 -- CANCELADO
 (
-    'Projeto Cancelado',
-    '2026-01-01',
-    '2026-10-01',
+    'App de Turismo',
+    '2026-03-01',
+    '2026-12-01',
     NULL,
-    700000,
+    430000,
+    'Projeto cancelado por estratégia',
+    23,
+    'CANCELADO'
+),
+
+(
+    'Sistema de Franquias',
+    '2026-04-15',
+    '2027-01-15',
+    NULL,
+    800000,
     'Projeto cancelado',
-    8,
+    24,
     'CANCELADO'
 );
