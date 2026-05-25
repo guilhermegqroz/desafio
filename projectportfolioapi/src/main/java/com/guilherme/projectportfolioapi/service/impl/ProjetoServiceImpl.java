@@ -181,7 +181,6 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     private void validarTransicaoStatus(Projeto projeto, StatusProjeto novoStatus) {
         if (!projeto.getStatus().podeTransicionarPara(novoStatus)) {
-
             throw new NegocioException("Transição de status inválida.");
         }
     }
@@ -228,23 +227,29 @@ public class ProjetoServiceImpl implements ProjetoService {
 
     private ClassificacaoRisco calcularRisco(Projeto projeto) {
 
-        long meses = ChronoUnit.MONTHS.between(projeto.getDataInicio(), projeto.getPrevisaoTermino());
+        long meses = ChronoUnit.MONTHS.between(
+                projeto.getDataInicio(),
+                projeto.getPrevisaoTermino());
 
         BigDecimal orcamento = projeto.getOrcamentoTotal();
 
-        boolean baixoRisco = possuiOrcamentoBaixo(orcamento) && meses <= 3;
+        boolean medioRisco =
+                possuiOrcamentoMedio(orcamento)
+                        || (meses > 3 && meses <= 6);
 
-        boolean medioRisco = possuiOrcamentoMedio(orcamento) || (meses > 3 && meses <= 6);
+        boolean altoRisco =
+                maiorQue(orcamento, LIMITE_MEDIO)
+                        || meses > 6;
 
-        if (baixoRisco) {
-            return ClassificacaoRisco.BAIXO;
+        if (altoRisco) {
+            return ClassificacaoRisco.ALTO;
         }
 
         if (medioRisco) {
             return ClassificacaoRisco.MEDIO;
         }
 
-        return ClassificacaoRisco.ALTO;
+        return ClassificacaoRisco.BAIXO;
     }
 
     private boolean possuiOrcamentoBaixo(BigDecimal orcamento) {

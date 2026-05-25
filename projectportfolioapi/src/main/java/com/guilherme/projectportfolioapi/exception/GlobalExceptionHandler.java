@@ -46,4 +46,15 @@ public class GlobalExceptionHandler {
                                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(errorResponse);
         }
+        @ExceptionHandler(NegocioException.class)
+        public ResponseEntity<ErrorResponse> handleNegocioException(NegocioException ex) {
+
+                ErrorResponse errorResponse = new ErrorResponse(
+                        LocalDateTime.now(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        ex.getMessage());
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(errorResponse);
+        }
 }
