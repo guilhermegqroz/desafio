@@ -63,17 +63,13 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         if (StringUtils.hasText(nome)) {
 
-            projetos = projetoRepository
-                    .findByNomeContainingIgnoreCase(
-                            nome,
-                            pageable);
+            projetos = projetoRepository.findByNomeContainingIgnoreCase(nome, pageable);
 
         } else if (StringUtils.hasText(status)) {
 
             StatusProjeto statusEnum = StatusProjeto.valueOf(status.toUpperCase());
 
-            projetos = projetoRepository
-                    .findByStatus(statusEnum, pageable);
+            projetos = projetoRepository.findByStatus(statusEnum, pageable);
 
         } else {
 
@@ -122,9 +118,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         validarTransicaoStatus(projeto, novoStatus);
 
-        validarProjetoEncerradoComMembros(
-                id,
-                novoStatus);
+        validarProjetoEncerradoComMembros(id, novoStatus);
 
         projeto.setStatus(novoStatus);
 
@@ -162,10 +156,7 @@ public class ProjetoServiceImpl implements ProjetoService {
     }
 
     private ProjetoResponseDTO toDTO(Projeto projeto) {
-
-        return projetoMapper.toDTO(
-                projeto,
-                calcularRisco(projeto));
+        return projetoMapper.toDTO(projeto, calcularRisco(projeto));
     }
 
     private void atualizarProjeto(Projeto projeto, ProjetoRequestDTO dto) {
@@ -184,17 +175,14 @@ public class ProjetoServiceImpl implements ProjetoService {
                 || projeto.getStatus() == StatusProjeto.EM_ANDAMENTO
                 || projeto.getStatus() == StatusProjeto.ENCERRADO) {
 
-            throw new NegocioException(
-                    "Não é permitido excluir projetos nesse status.");
+            throw new NegocioException("Não é permitido excluir projetos nesse status.");
         }
     }
 
     private void validarTransicaoStatus(Projeto projeto, StatusProjeto novoStatus) {
-        if (!projeto.getStatus()
-                .podeTransicionarPara(novoStatus)) {
+        if (!projeto.getStatus().podeTransicionarPara(novoStatus)) {
 
-            throw new NegocioException(
-                    "Transição de status inválida.");
+            throw new NegocioException("Transição de status inválida.");
         }
     }
 
@@ -202,52 +190,39 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         if (novoStatus == StatusProjeto.ENCERRADO) {
 
-            long totalMembros = projetoMembroRepository
-                    .countByProjetoId(projetoId);
+            long totalMembros = projetoMembroRepository.countByProjetoId(projetoId);
 
             if (totalMembros < 1) {
 
-                throw new NegocioException(
-                        "Projeto deve possuir ao menos 1 membro.");
+                throw new NegocioException("Projeto deve possuir ao menos 1 membro.");
             }
         }
     }
 
     private void validarFuncionario(MembroResponseDTO membro) {
 
-        if (!membro.getAtribuicao()
-                .equalsIgnoreCase("FUNCIONARIO")) {
-
-            throw new NegocioException(
-                    "Apenas FUNCIONARIOS podem ser associados.");
+        if (!membro.getAtribuicao().equalsIgnoreCase("FUNCIONARIO")) {
+            throw new NegocioException("Apenas FUNCIONARIOS podem ser associados.");
         }
     }
 
     private void validarLimiteMembrosProjeto(Long projetoId) {
 
-        long totalMembros = projetoMembroRepository
-                .countByProjetoId(projetoId);
+        long totalMembros = projetoMembroRepository.countByProjetoId(projetoId);
 
         if (totalMembros >= 10) {
-
-            throw new NegocioException(
-                    "Projeto já possui 10 membros.");
+            throw new NegocioException("Projeto já possui 10 membros.");
         }
     }
 
     private void validarLimiteProjetosMembro(Long membroId) {
 
         long projetosAtivos = projetoMembroRepository
-                .countProjetosAtivosDoMembro(
-                        membroId,
-                        List.of(
-                                StatusProjeto.ENCERRADO,
-                                StatusProjeto.CANCELADO));
+                .countProjetosAtivosDoMembro(membroId, List.of(StatusProjeto.ENCERRADO, StatusProjeto.CANCELADO));
 
         if (projetosAtivos >= 3) {
 
-            throw new NegocioException(
-                    "Membro já participa de 3 projetos ativos.");
+            throw new NegocioException("Membro já participa de 3 projetos ativos.");
         }
     }
 
@@ -257,7 +232,7 @@ public class ProjetoServiceImpl implements ProjetoService {
 
         BigDecimal orcamento = projeto.getOrcamentoTotal();
 
-        boolean baixoRisco = possuiOrcamentoBaixo(orcamento) && meses < 3;
+        boolean baixoRisco = possuiOrcamentoBaixo(orcamento) && meses <= 3;
 
         boolean medioRisco = possuiOrcamentoMedio(orcamento) || (meses >= 3 && meses <= 6);
 
@@ -277,8 +252,7 @@ public class ProjetoServiceImpl implements ProjetoService {
     }
 
     private boolean possuiOrcamentoMedio(BigDecimal orcamento) {
-        return maiorQue(orcamento, LIMITE_BAIXO)
-                && menorOuIgual(orcamento, LIMITE_MEDIO);
+        return maiorQue(orcamento, LIMITE_BAIXO) && menorOuIgual(orcamento, LIMITE_MEDIO);
     }
 
     private boolean menorOuIgual(BigDecimal valor, BigDecimal limite) {
